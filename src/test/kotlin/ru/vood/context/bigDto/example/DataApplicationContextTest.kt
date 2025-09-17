@@ -14,7 +14,7 @@ class DataApplicationContextTest {
         activityId = "activityId"
     )
 
-    val json = Json{
+    val json = Json {
         prettyPrint = true
     }
 
@@ -62,10 +62,10 @@ class DataApplicationContextTest {
         val message1 = enrich1.participantInfo.param()
         val message2 = enrich1.productInfo.param()
         val message3 = enrich1.riskInfo.param()
-        println(message)
-        println(message1)
-        println(message2)
-        println(message3)
+        println("dealInfo = " + message)
+        println("participantInfo = " + message1)
+        println("productInfo = " + message2)
+        println("riskInfo = " + message3)
     }
 
     @Test
@@ -83,13 +83,16 @@ class DataApplicationContextTest {
     }
 
 
-        @Test
+    @Test
     fun `нарушен порядок запуска`() {
         val assertThrows = Assertions.assertThrows(
             IllegalArgumentException::class.java,
             { dataApplicationContext.enrich(enrichContext<Set<ProductInfo>>(), this::getTraceId) })
 
-        Assertions.assertEquals("не могу принять ProductInfo, он должен быть принят после dealInfo", assertThrows.message)
+        Assertions.assertEquals(
+            "не могу принять ProductInfo, он должен быть принят после dealInfo",
+            assertThrows.message
+        )
 
     }
 

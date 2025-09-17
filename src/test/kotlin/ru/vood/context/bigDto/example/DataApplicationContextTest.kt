@@ -53,8 +53,6 @@ class DataApplicationContextTest {
 
         println(enrich1.mutationInfo)
 
-
-
         val encodeToString = json.encodeToString(DataApplicationContext.serializer(), enrich1)
         val decodeFromString = json.decodeFromString<DataApplicationContext>(encodeToString)
         println(encodeToString)

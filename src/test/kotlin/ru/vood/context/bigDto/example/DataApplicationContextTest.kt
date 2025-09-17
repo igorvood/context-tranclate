@@ -66,10 +66,6 @@ class DataApplicationContextTest {
         println(message1)
         println(message2)
         println(message3)
-
-
-
-
     }
 
     @Test

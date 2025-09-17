@@ -1,5 +1,6 @@
 package ru.vood.context.bigDto.example
 
+import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
@@ -12,6 +13,10 @@ class DataApplicationContextTest {
         traceId = "traceId",
         activityId = "activityId"
     )
+
+    val json = Json{
+        prettyPrint = true
+    }
 
     @Test
     fun getTraceId() {
@@ -47,6 +52,12 @@ class DataApplicationContextTest {
         println(enrich1.mutableMethods())
 
 
+
+        val encodeToString = json.encodeToString(DataApplicationContext.serializer(), enrich1)
+        val decodeFromString = json.decodeFromString<DataApplicationContext>(encodeToString)
+        println(encodeToString)
+        Assertions.assertEquals(enrich1, decodeFromString)
+
         val message = enrich1.dealInfo.param()
         val message1 = enrich1.participantInfo.param()
         val message2 = enrich1.productInfo.param()
@@ -55,6 +66,9 @@ class DataApplicationContextTest {
         println(message1)
         println(message2)
         println(message3)
+
+
+
 
     }
 

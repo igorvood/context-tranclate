@@ -21,23 +21,26 @@ data class DataApplicationContext(
 ) {
 
     fun enrich(dealInfo: DealInfo, method: KFunction<*>): DataApplicationContext {
-        val success = this.dealInfo.success(dealInfo, method)
-        return this.copy(dealInfo = success)
+        return this.dealInfo.success(dealInfo, method)
+            .let { this.copy(dealInfo = it) }
     }
 
     fun enrich(productInfo: Set<ProductInfo>, method: KFunction<*>): DataApplicationContext {
-        val success = this.productInfo.success(productInfo, method)
-        return this.copy(productInfo = success)
+        return this.productInfo.success(productInfo, method)
+            .let { this.copy(productInfo = it) }
+
     }
 
-    fun enrich(participantInfo: ParticipantInfo,  method: KFunction<*>): DataApplicationContext {
-        val success = this.participantInfo.success(participantInfo, method)
-        return this.copy(participantInfo = success)
+    fun enrich(participantInfo: ParticipantInfo, method: KFunction<*>): DataApplicationContext {
+        return this.participantInfo.success(participantInfo, method)
+            .let { this.copy(participantInfo = it) }
+
     }
 
-    fun enrich(riskInfo: RiskInfo,  method: KFunction<*>): DataApplicationContext {
-        val success = this.riskInfo.success(riskInfo, method)
-        return this.copy(riskInfo = success)
+    fun enrich(riskInfo: RiskInfo, method: KFunction<*>): DataApplicationContext {
+        return this.riskInfo.success(riskInfo, method)
+            .let { this.copy(riskInfo = it) }
+
     }
 
 

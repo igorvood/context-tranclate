@@ -12,7 +12,7 @@ import kotlinx.serialization.Serializable
  * @property allReadyReceived флаг указывающий, что данные были полностью получены
  */
 @Serializable
-data class ImmutableNotNullContextParam<T : Any, E: IEnrichError>(
+data class ImmutableNotNullContextParam<T : Any, E : IEnrichError>(
     override val param: T? = null,
     override val receivedError: E? = null,
     override val allReadyReceived: Boolean = param != null || receivedError != null,

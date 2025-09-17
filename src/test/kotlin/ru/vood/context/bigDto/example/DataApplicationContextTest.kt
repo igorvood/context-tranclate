@@ -47,11 +47,11 @@ class DataApplicationContextTest {
 
         val enrich = enriched.enrich(enrichContext<RiskInfo>(), this::testMethod)
 
-        println(enrich.mutableMethods())
+        println(enrich.mutationInfo)
 
         val enrich1 = enrich.enrich(enrichContext<Set<ProductInfo>>(), this::testMethod)
 
-        println(enrich1.mutableMethods())
+        println(enrich1.mutationInfo)
 
 
 

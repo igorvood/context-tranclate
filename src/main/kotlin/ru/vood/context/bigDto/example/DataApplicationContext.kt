@@ -40,12 +40,13 @@ data class DataApplicationContext(
             .let { this.copy(riskInfo = it) }
     }
 
-    fun mutableMethods(): List<Pair<String, MutableMethod>> {
-        return dealInfo.mutableMethods.map { "dealInfo" to it }
-            .plus(productInfo.mutableMethods.map { "productInfo" to it })
-            .plus(participantInfo.mutableMethods.map { "participantInfo" to it })
-            .plus(riskInfo.mutableMethods.map { "riskInfo" to it })
-            .sortedBy { it.second.time }
-    }
+
+    val mutationInfo by lazy { mutableMethods() }
+
+    private fun mutableMethods(): List<Pair<String, MutableMethod>> = dealInfo.mutableMethods.map { "dealInfo" to it }
+        .plus(productInfo.mutableMethods.map { "productInfo" to it })
+        .plus(participantInfo.mutableMethods.map { "participantInfo" to it })
+        .plus(riskInfo.mutableMethods.map { "riskInfo" to it })
+        .sortedBy { it.second.time }
 
 }

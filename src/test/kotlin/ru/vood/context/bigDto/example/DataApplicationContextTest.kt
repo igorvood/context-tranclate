@@ -37,10 +37,26 @@ class DataApplicationContextTest {
 
         println(assertThrows1.message)
 
-        enriched.enrich(enrichContext<RiskInfo>(), this::testMethod)
-        enriched.enrich(enrichContext<Set<ProductInfo>>(), this::testMethod)
+        val enrich = enriched.enrich(enrichContext<RiskInfo>(), this::testMethod)
+
+        println(enrich.mutableMethods())
+
+        val enrich1 = enrich.enrich(enrichContext<Set<ProductInfo>>(), this::testMethod)
+
+        println(enrich1.mutableMethods())
 
     }
+
+    @Test
+    fun asdad() {
+        val assertThrows = Assertions.assertThrows(
+            IllegalArgumentException::class.java,
+            { dataApplicationContext.enrich(enrichContext<Set<ProductInfo>>(), this::getTraceId) })
+
+        Assertions.assertEquals("не могу принять ProductInfo, он должен быть принят после dealInfo", assertThrows.message)
+
+    }
+
 
     fun testMethod(s: String, i: Int): LocalTime {
         TODO()

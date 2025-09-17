@@ -20,6 +20,8 @@ class DataApplicationContextTest {
 
     @Test
     fun getTraceId() {
+
+        println(json.encodeToString(DataApplicationContext.serializer(), dataApplicationContext))
         val enriched = dataApplicationContext
             .enrich(enrichContext<DealInfo>(), this::getTraceId)
             .enrich(enrichContext<ParticipantInfo>(), this::getTraceId)

@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class MutableNullableContextParam<T, E : IEnrichError>(
+data class MutableNullableContextParam<T, E: IEnrichError>(
     override val param: T? = null,
     override val receivedError: E? = null,
     override val allReadyReceived: Boolean = false,

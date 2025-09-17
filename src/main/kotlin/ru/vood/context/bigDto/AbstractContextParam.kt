@@ -192,10 +192,8 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
             method: KFunction<*>
         ): ImmutableNotNullContextParam<T, E> {
 
-            require(!this.allReadyReceived) {
-                val last = this.mutableMethods.last()
-                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-            }
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
             return this.copy(
                 param = value,
                 allReadyReceived = true,
@@ -210,10 +208,8 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
             error: E,
             method: KFunction<*>
         ): ImmutableNotNullContextParam<T, E> {
-            require(!this.allReadyReceived) {
-                val last = this.mutableMethods.last()
-                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-            }
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
 
             return this.copy(
                 receivedError = error,
@@ -236,10 +232,8 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
             value: T?,
             method: KFunction<*>
         ): ImmutableNullableContextParam<T, E> {
-            require(!this.allReadyReceived) {
-                val last = this.mutableMethods.last()
-                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-            }
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
 
             return this.copy(
                 param = value,
@@ -255,10 +249,8 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
             error: E,
             method: KFunction<*>
         ): ImmutableNullableContextParam<T, E> {
-            require(!this.allReadyReceived) {
-                val last = this.mutableMethods.last()
-                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-            }
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
 
             return this.copy(
                 receivedError = error,
@@ -271,10 +263,8 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
          * Создает успешный результат с null значением.
          */
         fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.successNull(method: KFunction<*>): ImmutableNullableContextParam<T, E> {
-            require(!this.allReadyReceived) {
-                val last = this.mutableMethods.last()
-                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-            }
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
             return this.copy(
                 param = null,
                 allReadyReceived = true,

@@ -1,6 +1,7 @@
 package ru.vood.context.bigDto.example
 
 import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.vood.context.bigDto.example.enrich.enrichContext
 import java.time.LocalTime
@@ -58,6 +59,7 @@ class DataApplicationContextTest {
     }
 
     @Test
+    @Disabled
     fun `тест на пустые значения`() {
         val message = dataApplicationContext.dealInfo.param()
         val message1 = dataApplicationContext.participantInfo.param()

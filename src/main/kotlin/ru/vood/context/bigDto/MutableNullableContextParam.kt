@@ -1,10 +1,10 @@
 package ru.vood.context.bigDto
 
-data class MutableNullableContextParam<T>(
+data class MutableNullableContextParam<T, E: IEnrichError>(
     override val param: T? = null,
-    override val receivedError: String? = null,
+    override val receivedError: E? = null,
     override val allReadyReceived: Boolean = false
-) : AbstractContextParam<T>() {
+) : AbstractContextParam<T, E>() {
 
     init {
         // Правило 1: Не может быть одновременно и данных и ошибки

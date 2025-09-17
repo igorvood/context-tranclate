@@ -13,10 +13,10 @@ import ru.vood.context.bigDto.MutableNullableContextParam
 data class DataApplicationContext(
     val traceId: String,
     val activityId: String,
-    val dealInfo: ImmutableNotNullContextParam<DealInfo> = pendingImmutableNotNull(),
-    val productInfo: MutableNotNullContextParam<Set<ProductInfo>> = pendingMutableNotNull(),
-    val participantInfo: ImmutableNullableContextParam<ParticipantInfo> = pendingImmutableNullable(),
-    val riskInfo: MutableNullableContextParam<RiskInfo> = pendingMutableNullable(),
+    val dealInfo: ImmutableNotNullContextParam<DealInfo, SomeError> = pendingImmutableNotNull(),
+    val productInfo: MutableNotNullContextParam<Set<ProductInfo>, SomeError> = pendingMutableNotNull(),
+    val participantInfo: ImmutableNullableContextParam<ParticipantInfo, SomeError> = pendingImmutableNullable(),
+    val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
 ) {
 
     fun enrich(dealInfo: DealInfo): DataApplicationContext {

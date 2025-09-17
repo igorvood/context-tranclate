@@ -15,7 +15,7 @@ import java.lang.reflect.Type
  *
  * @throws IllegalStateException если состояние параметра неконсистентно (одновременно присутствуют и данные и ошибка)
  */
-abstract sealed class AbstractContextParam<T>() {
+abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
 
 
     /**
@@ -43,7 +43,7 @@ abstract sealed class AbstractContextParam<T>() {
      *
      * @return текст ошибки или null если ошибок не было
      */
-    abstract val receivedError: String?
+    abstract val receivedError: E?
 
 
     /**
@@ -96,6 +96,7 @@ abstract sealed class AbstractContextParam<T>() {
                 // Для Class - проверяем, не является ли он примитивным типом
                 !type.isPrimitive && type != Void.TYPE
             }
+
             is ParameterizedType -> {
                 // Для ParameterizedType проверяем raw type
                 val rawType = type.rawType
@@ -105,99 +106,105 @@ abstract sealed class AbstractContextParam<T>() {
                     true
                 }
             }
+
             else -> true // Для WildcardType и других - считаем nullable
         }
     }
 
-    companion object{
+    companion object {
         /**
          * Создает успешный результат с ненулевым параметром.
          */
-        fun <T : Any> MutableNotNullContextParam<T>.success(value: T): MutableNotNullContextParam<T> {
+        fun <T : Any, E : IEnrichError> MutableNotNullContextParam<T, E>.success(value: T): MutableNotNullContextParam<T, E> {
             return this.copy(param = value, allReadyReceived = true)
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T : Any> MutableNotNullContextParam<T>.failure(error: String): MutableNotNullContextParam<T> {
+        fun <T : Any, E : IEnrichError> MutableNotNullContextParam<T, E>.failure(error: E): MutableNotNullContextParam<T, E> {
             return this.copy(receivedError = error, allReadyReceived = true)
         }
 
         /**
          * Создает ожидающий результат (данные еще не получены).
          */
-        fun <T : Any> pendingMutableNotNull(): MutableNotNullContextParam<T> {
+        fun <T : Any, E : IEnrichError> pendingMutableNotNull(): MutableNotNullContextParam<T, E> {
             return MutableNotNullContextParam(allReadyReceived = false)
         }
 
         /**
          * Создает успешный результат с ненулевым параметром.
          */
-        fun <T> MutableNullableContextParam<T>.success(value: T): MutableNullableContextParam<T> {
+        fun <T, E : IEnrichError> MutableNullableContextParam<T, E>.success(value: T): MutableNullableContextParam<T, E> {
             return this.copy(param = value, allReadyReceived = true)
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T> MutableNullableContextParam<T>.failure(error: String): MutableNullableContextParam<T> {
+        fun <T, E : IEnrichError> MutableNullableContextParam<T, E>.failure(error: E): MutableNullableContextParam<T, E> {
             return this.copy(receivedError = error, allReadyReceived = true)
         }
 
         /**
          * Создает ожидающий результат (данные еще не получены).
          */
-        fun <T> pendingMutableNullable(): MutableNullableContextParam<T> {
+        fun <T, E : IEnrichError> pendingMutableNullable(): MutableNullableContextParam<T, E> {
             return MutableNullableContextParam(allReadyReceived = false)
         }
 
         /**
          * Создает успешный результат с ненулевым параметром.
          */
-        fun <T : Any> ImmutableNotNullContextParam<T>.success(value: T): ImmutableNotNullContextParam<T> {
+        fun <T : Any, E : IEnrichError> ImmutableNotNullContextParam<T, E>.success(value: T): ImmutableNotNullContextParam<T, E> {
+            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
             return this.copy(param = value, allReadyReceived = true)
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T : Any> ImmutableNotNullContextParam<T>.failure(error: String): ImmutableNotNullContextParam<T> {
+        fun <T : Any, E : IEnrichError> ImmutableNotNullContextParam<T, E>.failure(error: E): ImmutableNotNullContextParam<T, E> {
+            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
             return this.copy(receivedError = error, allReadyReceived = true)
         }
 
         /**
          * Создает ожидающий результат (данные еще не получены).
          */
-        fun <T : Any> pendingImmutableNotNull(): ImmutableNotNullContextParam<T> {
+        fun <T : Any, E : IEnrichError> pendingImmutableNotNull(): ImmutableNotNullContextParam<T, E> {
             return ImmutableNotNullContextParam(allReadyReceived = false)
         }
 
         /**
          * Создает успешный результат с параметром (может быть null).
          */
-        fun <T> ImmutableNullableContextParam<T>.success(value: T?): ImmutableNullableContextParam<T> {
+        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.success(value: T?): ImmutableNullableContextParam<T, E> {
+            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
             return this.copy(param = value, allReadyReceived = true)
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T> ImmutableNullableContextParam<T>.failure(error: String): ImmutableNullableContextParam<T> {
+        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.failure(error: E): ImmutableNullableContextParam<T, E> {
+            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
             return this.copy(receivedError = error, allReadyReceived = true)
         }
 
         /**
          * Создает успешный результат с null значением.
          */
-        fun <T> ImmutableNullableContextParam<T>.successNull(): ImmutableNullableContextParam<T> {
+        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.successNull(): ImmutableNullableContextParam<T, E> {
+            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
             return this.copy(param = null, allReadyReceived = true)
         }
 
         /**
          * Создает ожидающий результат (данные еще не получены).
          */
-        fun <T> pendingImmutableNullable(): ImmutableNullableContextParam<T> {
+        fun <T, E : IEnrichError> pendingImmutableNullable(): ImmutableNullableContextParam<T, E> {
             return ImmutableNullableContextParam(allReadyReceived = false)
         }
     }

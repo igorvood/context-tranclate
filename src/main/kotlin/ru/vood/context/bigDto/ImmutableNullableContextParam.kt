@@ -9,11 +9,11 @@ package ru.vood.context.bigDto
  * @property receivedError сообщение об ошибке, если в процессе получения параметра произошла ошибка
  * @property allReadyReceived флаг указывающий, что данные были полностью получены
  */
-data class ImmutableNullableContextParam<T>(
+data class ImmutableNullableContextParam<T, E: IEnrichError>(
     override val param: T? = null,
-    override val receivedError: String? = null,
+    override val receivedError: E? = null,
     override val allReadyReceived: Boolean = false
-) : AbstractContextParam<T>() {
+) : AbstractContextParam<T, E>() {
 
     init {
         validateConsistency()

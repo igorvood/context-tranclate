@@ -13,13 +13,17 @@ class DataApplicationContextTest {
     @Test
     fun getTraceId() {
 
-        val enrich = dataApplicationContext
+        val enriched = dataApplicationContext
             .enrich(enrichContext<DealInfo>())
             .enrich(enrichContext<ParticipantInfo>())
             .enrich(enrichContext<RiskInfo>())
             .enrich(enrichContext<Set<ProductInfo>>())
 
-        println(enrich)
+        println(enriched)
+
+
+        enriched.enrich(enrichContext<DealInfo>())
+
     }
 
 }

@@ -151,6 +151,55 @@ abstract sealed class AbstractContextParam<T>() {
         fun <T> pendingMutableNullable(): MutableNullableContextParam<T> {
             return MutableNullableContextParam(allReadyReceived = false)
         }
+
+        /**
+         * Создает успешный результат с ненулевым параметром.
+         */
+        fun <T : Any> ImmutableNotNullContextParam<T>.success(value: T): ImmutableNotNullContextParam<T> {
+            return ImmutableNotNullContextParam(param = value, allReadyReceived = true)
+        }
+
+        /**
+         * Создает результат с ошибкой.
+         */
+        fun <T : Any> ImmutableNotNullContextParam<T>.failure(error: String): ImmutableNotNullContextParam<T> {
+            return ImmutableNotNullContextParam(receivedError = error, allReadyReceived = true)
+        }
+
+        /**
+         * Создает ожидающий результат (данные еще не получены).
+         */
+        fun <T : Any> pendingImmutableNotNull(): ImmutableNotNullContextParam<T> {
+            return ImmutableNotNullContextParam(allReadyReceived = false)
+        }
+
+        /**
+         * Создает успешный результат с параметром (может быть null).
+         */
+        fun <T> success(value: T?): ImmutableNullableContextParam<T> {
+            return ImmutableNullableContextParam(param = value, allReadyReceived = true)
+        }
+
+        /**
+         * Создает результат с ошибкой.
+         */
+        fun <T> ImmutableNullableContextParam<T>.failure(error: String): ImmutableNullableContextParam<T> {
+            return ImmutableNullableContextParam(receivedError = error, allReadyReceived = true)
+        }
+
+        /**
+         * Создает успешный результат с null значением.
+         */
+        fun <T> ImmutableNullableContextParam<T>.successNull(): ImmutableNullableContextParam<T> {
+            return ImmutableNullableContextParam(param = null, allReadyReceived = true)
+        }
+
+        /**
+         * Создает ожидающий результат (данные еще не получены).
+         */
+        fun <T> pendingImmutableNullable(): ImmutableNullableContextParam<T> {
+            return ImmutableNullableContextParam(allReadyReceived = false)
+        }
     }
 
 }

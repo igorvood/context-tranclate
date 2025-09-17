@@ -156,14 +156,14 @@ abstract sealed class AbstractContextParam<T>() {
          * Создает успешный результат с ненулевым параметром.
          */
         fun <T : Any> ImmutableNotNullContextParam<T>.success(value: T): ImmutableNotNullContextParam<T> {
-            return ImmutableNotNullContextParam(param = value, allReadyReceived = true)
+            return this.copy(param = value, allReadyReceived = true)
         }
 
         /**
          * Создает результат с ошибкой.
          */
         fun <T : Any> ImmutableNotNullContextParam<T>.failure(error: String): ImmutableNotNullContextParam<T> {
-            return ImmutableNotNullContextParam(receivedError = error, allReadyReceived = true)
+            return this.copy(receivedError = error, allReadyReceived = true)
         }
 
         /**
@@ -176,22 +176,22 @@ abstract sealed class AbstractContextParam<T>() {
         /**
          * Создает успешный результат с параметром (может быть null).
          */
-        fun <T> success(value: T?): ImmutableNullableContextParam<T> {
-            return ImmutableNullableContextParam(param = value, allReadyReceived = true)
+        fun <T> ImmutableNullableContextParam<T>.success(value: T?): ImmutableNullableContextParam<T> {
+            return this.copy(param = value, allReadyReceived = true)
         }
 
         /**
          * Создает результат с ошибкой.
          */
         fun <T> ImmutableNullableContextParam<T>.failure(error: String): ImmutableNullableContextParam<T> {
-            return ImmutableNullableContextParam(receivedError = error, allReadyReceived = true)
+            return this.copy(receivedError = error, allReadyReceived = true)
         }
 
         /**
          * Создает успешный результат с null значением.
          */
         fun <T> ImmutableNullableContextParam<T>.successNull(): ImmutableNullableContextParam<T> {
-            return ImmutableNullableContextParam(param = null, allReadyReceived = true)
+            return this.copy(param = null, allReadyReceived = true)
         }
 
         /**

@@ -45,10 +45,34 @@ class DataApplicationContextTest {
 
         println(enrich1.mutableMethods())
 
+
+        val message = enrich1.dealInfo.param()
+        val message1 = enrich1.participantInfo.param()
+        val message2 = enrich1.productInfo.param()
+        val message3 = enrich1.riskInfo.param()
+        println(message)
+        println(message1)
+        println(message2)
+        println(message3)
+
     }
 
     @Test
-    fun asdad() {
+    fun `тест на пустые значения`() {
+        val message = dataApplicationContext.dealInfo.param()
+        val message1 = dataApplicationContext.participantInfo.param()
+        val message3 = dataApplicationContext.riskInfo.param()
+        val message2 = dataApplicationContext.productInfo.param()
+        println(message)
+        println(message1)
+        println(message2)
+        println(message3)
+
+    }
+
+
+        @Test
+    fun `нарушен порядок запуска`() {
         val assertThrows = Assertions.assertThrows(
             IllegalArgumentException::class.java,
             { dataApplicationContext.enrich(enrichContext<Set<ProductInfo>>(), this::getTraceId) })

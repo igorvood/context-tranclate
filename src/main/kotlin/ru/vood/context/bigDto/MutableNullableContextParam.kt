@@ -1,5 +1,9 @@
 package ru.vood.context.bigDto
 
+import kotlinx.serialization.Serializable
+
+
+@Serializable
 data class MutableNullableContextParam<T, E: IEnrichError>(
     override val param: T? = null,
     override val receivedError: E? = null,

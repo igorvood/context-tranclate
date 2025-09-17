@@ -1,5 +1,6 @@
 package ru.vood.context.bigDto.example
 
+import kotlinx.serialization.Serializable
 import ru.vood.context.bigDto.*
 import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingImmutableNotNull
 import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingImmutableNullable
@@ -8,6 +9,7 @@ import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingMutableNulla
 import ru.vood.context.bigDto.AbstractContextParam.Companion.success
 import kotlin.reflect.KFunction
 
+@Serializable
 data class DataApplicationContext(
     val traceId: String,
     val activityId: String,

@@ -1,5 +1,7 @@
 package ru.vood.context.bigDto
 
+import kotlinx.serialization.Serializable
+
 /**
  * Реализация [AbstractContextParam] для неизменяемых нулевых параметров.
  * Параметр может быть null даже при успешном выполнении.
@@ -9,6 +11,7 @@ package ru.vood.context.bigDto
  * @property receivedError сообщение об ошибке, если в процессе получения параметра произошла ошибка
  * @property allReadyReceived флаг указывающий, что данные были полностью получены
  */
+@Serializable
 data class ImmutableNullableContextParam<T, E: IEnrichError>(
     override val param: T? = null,
     override val receivedError: E? = null,

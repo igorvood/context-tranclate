@@ -2,6 +2,7 @@ package ru.vood.context.bigDto
 
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
+import kotlin.reflect.KFunction
 
 /**
  * Абстрактный класс представляющий параметр контекста с возможностью хранения данных или ошибки.
@@ -17,6 +18,7 @@ import java.lang.reflect.Type
  */
 abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
 
+    abstract val mutableMethods: List<MutableMethod>
 
     /**
      * Защищенное свойство для хранения значения параметра.
@@ -115,15 +117,29 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
         /**
          * Создает успешный результат с ненулевым параметром.
          */
-        fun <T : Any, E : IEnrichError> MutableNotNullContextParam<T, E>.success(value: T): MutableNotNullContextParam<T, E> {
-            return this.copy(param = value, allReadyReceived = true)
+        fun <T : Any, E : IEnrichError> MutableNotNullContextParam<T, E>.success(
+            value: T,
+            method: KFunction<*>
+        ): MutableNotNullContextParam<T, E> {
+            return this.copy(
+                param = value,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T : Any, E : IEnrichError> MutableNotNullContextParam<T, E>.failure(error: E): MutableNotNullContextParam<T, E> {
-            return this.copy(receivedError = error, allReadyReceived = true)
+        fun <T : Any, E : IEnrichError> MutableNotNullContextParam<T, E>.failure(
+            error: E,
+            method: KFunction<*>
+        ): MutableNotNullContextParam<T, E> {
+            return this.copy(
+                receivedError = error,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
@@ -136,15 +152,29 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
         /**
          * Создает успешный результат с ненулевым параметром.
          */
-        fun <T, E : IEnrichError> MutableNullableContextParam<T, E>.success(value: T): MutableNullableContextParam<T, E> {
-            return this.copy(param = value, allReadyReceived = true)
+        fun <T, E : IEnrichError> MutableNullableContextParam<T, E>.success(
+            value: T,
+            method: KFunction<*>
+        ): MutableNullableContextParam<T, E> {
+            return this.copy(
+                param = value,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T, E : IEnrichError> MutableNullableContextParam<T, E>.failure(error: E): MutableNullableContextParam<T, E> {
-            return this.copy(receivedError = error, allReadyReceived = true)
+        fun <T, E : IEnrichError> MutableNullableContextParam<T, E>.failure(
+            error: E,
+            method: KFunction<*>
+        ): MutableNullableContextParam<T, E> {
+            return this.copy(
+                receivedError = error,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
@@ -157,17 +187,35 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
         /**
          * Создает успешный результат с ненулевым параметром.
          */
-        fun <T : Any, E : IEnrichError> ImmutableNotNullContextParam<T, E>.success(value: T): ImmutableNotNullContextParam<T, E> {
-            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
-            return this.copy(param = value, allReadyReceived = true)
+        fun <T : Any, E : IEnrichError> ImmutableNotNullContextParam<T, E>.success(
+            value: T,
+            method: KFunction<*>
+        ): ImmutableNotNullContextParam<T, E> {
+
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+            return this.copy(
+                param = value,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T : Any, E : IEnrichError> ImmutableNotNullContextParam<T, E>.failure(error: E): ImmutableNotNullContextParam<T, E> {
-            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
-            return this.copy(receivedError = error, allReadyReceived = true)
+        fun <T : Any, E : IEnrichError> ImmutableNotNullContextParam<T, E>.failure(
+            error: E,
+            method: KFunction<*>
+        ): ImmutableNotNullContextParam<T, E> {
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+
+            return this.copy(
+                receivedError = error,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
@@ -180,25 +228,48 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
         /**
          * Создает успешный результат с параметром (может быть null).
          */
-        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.success(value: T?): ImmutableNullableContextParam<T, E> {
-            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
-            return this.copy(param = value, allReadyReceived = true)
+        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.success(
+            value: T?,
+            method: KFunction<*>
+        ): ImmutableNullableContextParam<T, E> {
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+
+            return this.copy(
+                param = value,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
          * Создает результат с ошибкой.
          */
-        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.failure(error: E): ImmutableNullableContextParam<T, E> {
-            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
-            return this.copy(receivedError = error, allReadyReceived = true)
+        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.failure(
+            error: E,
+            method: KFunction<*>
+        ): ImmutableNullableContextParam<T, E> {
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+
+            return this.copy(
+                receivedError = error,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**
          * Создает успешный результат с null значением.
          */
-        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.successNull(): ImmutableNullableContextParam<T, E> {
-            require(!this.allReadyReceived) { "param is immutable, it all ready received " }
-            return this.copy(param = null, allReadyReceived = true)
+        fun <T, E : IEnrichError> ImmutableNullableContextParam<T, E>.successNull(method: KFunction<*>): ImmutableNullableContextParam<T, E> {
+            require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+                "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+            return this.copy(
+                param = null,
+                allReadyReceived = true,
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
         }
 
         /**

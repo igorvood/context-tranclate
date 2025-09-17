@@ -12,7 +12,8 @@ package ru.vood.context.bigDto
 data class ImmutableNullableContextParam<T, E: IEnrichError>(
     override val param: T? = null,
     override val receivedError: E? = null,
-    override val allReadyReceived: Boolean = false
+    override val allReadyReceived: Boolean = false,
+    override val mutableMethods: List<MutableMethod> = listOf()
 ) : AbstractContextParam<T, E>() {
 
     init {

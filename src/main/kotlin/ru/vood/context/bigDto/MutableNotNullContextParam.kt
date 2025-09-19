@@ -49,16 +49,6 @@ data class MutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
         )
     }
 
-    override fun error(
-        error: E,
-        method: KFunction<*>
-    ): MutableNotNullContextParam<T, E> {
-        return this.copy(
-            result = error.left(),
-            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-        )
-    }
-
     companion object {
         /**
          * Создает ожидающий результат (данные еще не получены).

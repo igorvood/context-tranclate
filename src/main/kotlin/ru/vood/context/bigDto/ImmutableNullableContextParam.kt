@@ -48,20 +48,6 @@ data class ImmutableNullableContextParam<T : IContextParam, E : IEnrichError>(
         )
     }
 
-    override fun error(
-        error: E,
-        method: KFunction<*>
-    ): ImmutableNullableContextParam<T, E> {
-        require(!this.allreadyReceived()) {
-            val last = this.mutableMethods.last()
-            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-        }
-        return this.copy(
-            result = error.left(),
-            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-        )
-    }
-
     /**
      * Создает успешный результат с null значением.
      */

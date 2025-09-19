@@ -1,6 +1,7 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
+import arrow.core.left
 import kotlin.reflect.KFunction
 
 /**
@@ -57,10 +58,45 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
      * @param method функция, в которой произошла ошибка
      * @return новый экземпляр [AbstractContextParam] с установленной ошибкой
      */
-    abstract fun error(
+    fun error(
         error: E,
         method: KFunction<*>
-    ): AbstractContextParam<T, E>
+    ): AbstractContextParam<T, E> {
+        return when (this) {
+            is ImmutableNotNullContextParam<T, E> -> {
+                require(!this.allreadyReceived()) {
+                    val last = this.mutableMethods.last()
+                    "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+                }
+                this.copy(
+                    result = error.left(),
+                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+                )
+            }
+
+            is ImmutableNullableContextParam<T, E> -> {
+                require(!this.allreadyReceived()) {
+                    val last = this.mutableMethods.last()
+                    "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+                }
+                this.copy(
+                    result = error.left(),
+                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+                )
+            }
+
+            is MutableNotNullContextParam<T, E> -> this.copy(
+                result = error.left(),
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
+
+            is MutableNullableContextParam<T, E> -> this.copy(
+                result = error.left(),
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
+        }
+
+    }
 
 }
 

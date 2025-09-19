@@ -1,5 +1,9 @@
 package ru.vood.context.bigDto
 
+import arrow.core.Either
+import arrow.core.left
+import arrow.core.right
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlin.reflect.KFunction
 
@@ -13,43 +17,11 @@ import kotlin.reflect.KFunction
  * @property allReadyReceived флаг указывающий, что данные были полностью получены
  */
 @Serializable
-data class ImmutableNotNullContextParam<T : Any, E: IEnrichError>(
-    override val param: T? = null,
-    override val receivedError: E? = null,
-    override val allReadyReceived: Boolean = param != null || receivedError != null,
-    override val mutableMethods: List<MutableMethod> = listOf()
+data class ImmutableNotNullContextParam<T : Any, E : IEnrichError>(
+    @Contextual
+    override val result: Either<E, T>? = null,
+    override val mutableMethods: List<MutableMethod> = listOf(),
 ) : AbstractContextParam<T, E>() {
-
-    init {
-        validateConsistency()
-    }
-
-    private fun validateConsistency() {
-        // Правило 1: Не может быть одновременно и данных и ошибки
-        require(!(param != null && receivedError != null)) {
-            "Inconsistent state: cannot have both data (param) and error"
-        }
-
-        // Правило 2: Если нет ошибки, параметр не может быть null
-        require(!(receivedError == null && param == null && allReadyReceived)) {
-            "Inconsistent state: parameter cannot be null when there is no error and operation is completed"
-        }
-
-        // Правило 3: Если есть ошибка, параметр должен быть null
-        require(!(receivedError != null && param != null)) {
-            "Inconsistent state: parameter must be null when there is an error"
-        }
-
-        // Правило 4: allReadyReceived должен быть согласован с состоянием
-        require(allReadyReceived == (param != null || receivedError != null)) {
-            "Inconsistent state: allReadyReceived must reflect actual completion state"
-        }
-
-        // Правило 5: Если данные получены (allReadyReceived = true), должен быть либо параметр, либо ошибка
-        require(!(allReadyReceived && param == null && receivedError == null)) {
-            "Inconsistent state: cannot be marked as ready without data or error"
-        }
-    }
 
     override val mutableParam: Boolean
         get() = false
@@ -59,21 +31,24 @@ data class ImmutableNotNullContextParam<T : Any, E: IEnrichError>(
      * @throws IllegalStateException если параметр null или есть ошибка
      */
     override fun param(): T {
-        return param ?: throw IllegalStateException(
-            receivedError?.let { "Parameter not available due to error: $it" }
-                ?: "Parameter not yet available"
-        )
+        return result
+            ?.fold(
+                { error("Parameter not available due to error: $it") }, {
+                    it
+                }
+            ) ?: error("Parameter not yet available")
     }
 
     override fun success(
-        value: T,
+        value: T?,
         method: KFunction<*>
     ): ImmutableNotNullContextParam<T, E> {
-        require(!this.allReadyReceived) { val last = this.mutableMethods.last()
-            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+        require(!this.allReadyReceived()) {
+            val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+        }
         return this.copy(
-            param = value,
-            allReadyReceived = true,
+            result = value!!.right(),
             mutableMethods = this.mutableMethods.plus(MutableMethod(method))
         )
     }
@@ -82,22 +57,23 @@ data class ImmutableNotNullContextParam<T : Any, E: IEnrichError>(
         error: E,
         method: KFunction<*>
     ): ImmutableNotNullContextParam<T, E> {
-        require(!this.allReadyReceived) { val last = this.mutableMethods.last()
-            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+        require(!this.allReadyReceived()) {
+            val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+        }
 
         return this.copy(
-            receivedError = error,
-            allReadyReceived = true,
+            result = error.left(),
             mutableMethods = this.mutableMethods.plus(MutableMethod(method))
         )
     }
 
-    companion object{
+    companion object {
         /**
          * Создает ожидающий результат (данные еще не получены).
          */
         fun <T : Any, E : IEnrichError> pendingImmutableNotNull(): ImmutableNotNullContextParam<T, E> {
-            return ImmutableNotNullContextParam(allReadyReceived = false)
+            return ImmutableNotNullContextParam()
         }
 
     }

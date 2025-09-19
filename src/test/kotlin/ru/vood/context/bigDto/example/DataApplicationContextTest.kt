@@ -1,5 +1,6 @@
 package ru.vood.context.bigDto.example
 
+import arrow.core.serialization.ArrowModule
 import kotlinx.serialization.json.Json
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
@@ -16,6 +17,7 @@ class DataApplicationContextTest {
 
     val json = Json {
         prettyPrint = true
+        serializersModule = ArrowModule
     }
 
     @Test
@@ -54,8 +56,10 @@ class DataApplicationContextTest {
         println(enrich1.mutationInfo)
 
         val encodeToString = json.encodeToString(DataApplicationContext.serializer(), enrich1)
-        val decodeFromString = json.decodeFromString<DataApplicationContext>(encodeToString)
         println(encodeToString)
+
+        val decodeFromString = json.decodeFromString<DataApplicationContext>(encodeToString)
+
         Assertions.assertEquals(enrich1, decodeFromString)
 
         val message = enrich1.dealInfo.param()

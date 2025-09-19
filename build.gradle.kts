@@ -1,10 +1,12 @@
 plugins {
-    kotlin("jvm") version "2.2.10"
-    kotlin("plugin.spring") version "2.2.10"
-    kotlin("plugin.serialization") version "2.2.10"
+    kotlin("jvm") version "2.1.21"
+    kotlin("plugin.spring") version "2.1.21"
+    kotlin("plugin.serialization") version "2.1.21"
     id("org.springframework.boot") version "3.5.5"
     id("io.spring.dependency-management") version "1.1.7"
-    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
+    id("com.google.devtools.ksp") version "2.1.21-2.0.2"
+
+//    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
 }
 
 group = "ru.vood.context.receivers.example"
@@ -25,6 +27,7 @@ val arrowVersion = "2.1.2"
 dependencies {
     implementation(platform ("io.arrow-kt:arrow-stack:$arrowVersion"))
     api("io.arrow-kt:arrow-core")
+    api("io.arrow-kt:arrow-core-serialization")
     api("io.arrow-kt:arrow-optics")
     ksp("io.arrow-kt:arrow-optics-ksp-plugin:$arrowVersion")
 
@@ -32,7 +35,9 @@ dependencies {
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("com.ocadotechnology.gembus:test-arranger:1.6.4.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.8.1!!")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-core:1.8.1!!")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.1!!")
 
 
 

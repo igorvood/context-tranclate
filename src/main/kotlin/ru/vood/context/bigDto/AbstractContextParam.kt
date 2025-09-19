@@ -29,15 +29,15 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
      * - в процессе получения данных произошла ошибка
      * - параметр по своей природе может быть null
      */
-    protected abstract val param: T?
-    /**
-     * Сообщение об ошибке, возникшей при получении параметра.
-     *
-     * @return текст ошибки или null если ошибок не было
-     */
-    abstract val receivedError: E?
+//    protected abstract val param: T?
+//    /**
+//     * Сообщение об ошибке, возникшей при получении параметра.
+//     *
+//     * @return текст ошибки или null если ошибок не было
+//     */
+//    abstract val receivedError: E?
 
-//    abstract val result: Either<E, T?>
+    abstract protected val result: Either<E, T?>?
 
     /**
      * Флаг указывающий, является ли реализация параметра изменяемой.
@@ -46,9 +46,8 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
      */
     abstract val mutableParam: Boolean
 
-    abstract val allReadyReceived: Boolean
+    final fun allReadyReceived(): Boolean = result != null
 //            =  param != null || receivedError != null
-
 
 
     /**
@@ -58,14 +57,13 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
      *
      * @sample AbstractContextParam.receivedError
      */
-    fun hasError() = receivedError != null
+    fun hasError() = result?.isLeft()
 
     /**
      * Проверяет, содержит ли параметр валидное ненулевое значение.
      */
-    fun hasValue(): Boolean {
-        return allReadyReceived
-    }
+    fun hasValue() = result?.isRight()
+
 
     abstract fun param(): T?
 
@@ -124,7 +122,7 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
     }
 
     abstract fun success(
-        value: T,
+        value: T?,
         method: KFunction<*>
     ): AbstractContextParam<T, E>
 

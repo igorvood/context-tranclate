@@ -57,6 +57,13 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
      */
     fun hasError() = receivedError != null
 
+    /**
+     * Проверяет, содержит ли параметр валидное ненулевое значение.
+     */
+    fun hasValue(): Boolean {
+        return param != null
+    }
+
     abstract fun param(): T?
 
     /**
@@ -122,14 +129,6 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
         error: E,
         method: KFunction<*>
     ): AbstractContextParam<T, E>
-
-
-    /**
-     * Проверяет, содержит ли параметр валидное ненулевое значение.
-     */
-    fun hasValue(): Boolean {
-        return param != null && receivedError == null
-    }
 
 }
 

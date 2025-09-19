@@ -39,12 +39,12 @@ data class MutableNotNullContextParam<T : Any, E: IEnrichError>(
             ) ?: error("Parameter not yet available")
     }
 
-    override fun success(
-        value: T?,
+    fun success(
+        value: T,
         method: KFunction<*>
     ): MutableNotNullContextParam<T, E> {
         return this.copy(
-            result = value!!.right(),
+            result = value.right(),
             mutableMethods = this.mutableMethods.plus(MutableMethod(method))
         )
     }

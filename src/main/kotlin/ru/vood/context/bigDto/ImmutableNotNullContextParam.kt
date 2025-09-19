@@ -39,8 +39,8 @@ data class ImmutableNotNullContextParam<T : Any, E : IEnrichError>(
             ) ?: error("Parameter not yet available")
     }
 
-    override fun success(
-        value: T?,
+    fun success(
+        value: T,
         method: KFunction<*>
     ): ImmutableNotNullContextParam<T, E> {
         require(!this.allReadyReceived()) {
@@ -48,7 +48,7 @@ data class ImmutableNotNullContextParam<T : Any, E : IEnrichError>(
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }
         return this.copy(
-            result = value!!.right(),
+            result = value.right(),
             mutableMethods = this.mutableMethods.plus(MutableMethod(method))
         )
     }

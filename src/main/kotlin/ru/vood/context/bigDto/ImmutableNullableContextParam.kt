@@ -33,7 +33,7 @@ data class ImmutableNullableContextParam<T, E : IEnrichError>(
         )
     }
 
-    override fun success(
+    fun success(
         value: T?,
         method: KFunction<*>
     ): ImmutableNullableContextParam<T, E> {

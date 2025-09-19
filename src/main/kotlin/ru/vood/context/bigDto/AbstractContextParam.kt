@@ -17,27 +17,11 @@ import kotlin.reflect.KFunction
  *
  * @throws IllegalStateException если состояние параметра неконсистентно (одновременно присутствуют и данные и ошибка)
  */
-sealed class AbstractContextParam<T, E : IEnrichError>() {
+sealed class AbstractContextParam<out T, E : IEnrichError>() {
 
     abstract val mutableMethods: List<MutableMethod>
 
-    /**
-     * Защищенное свойство для хранения значения параметра.
-     *
-     * Может быть null в следующих случаях:
-     * - данные еще не были получены
-     * - в процессе получения данных произошла ошибка
-     * - параметр по своей природе может быть null
-     */
-//    protected abstract val param: T?
-//    /**
-//     * Сообщение об ошибке, возникшей при получении параметра.
-//     *
-//     * @return текст ошибки или null если ошибок не было
-//     */
-//    abstract val receivedError: E?
-
-    abstract protected val result: Either<E, T?>?
+    abstract val result: Either<E, T?>?
 
     /**
      * Флаг указывающий, является ли реализация параметра изменяемой.
@@ -121,10 +105,10 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
         }
     }
 
-    abstract fun success(
-        value: T?,
-        method: KFunction<*>
-    ): AbstractContextParam<T, E>
+//    abstract fun<TT> success(
+//        value: TT?,
+//        method: KFunction<*>
+//    ): AbstractContextParam<T, E>
 
     abstract fun error(
         error: E,

@@ -61,7 +61,7 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
      * Проверяет, содержит ли параметр валидное ненулевое значение.
      */
     fun hasValue(): Boolean {
-        return param != null
+        return allReadyReceived
     }
 
     abstract fun param(): T?

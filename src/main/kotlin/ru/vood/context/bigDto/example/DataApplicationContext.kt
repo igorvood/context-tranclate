@@ -8,6 +8,7 @@ import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingMutableNotNu
 import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingMutableNullable
 import ru.vood.context.bigDto.AbstractContextParam.Companion.success
 import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty1
 
 @Serializable
 data class DataApplicationContext(
@@ -18,6 +19,15 @@ data class DataApplicationContext(
     val participantInfo: ImmutableNullableContextParam<ParticipantInfo, SomeError> = pendingImmutableNullable(),
     val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
 ) {
+
+
+    fun enrich(prop: KProperty1<DataApplicationContext, AbstractContextParam<*, *>>,
+        someError: SomeError, method: KFunction<*>): DataApplicationContext {
+        TODO()
+//        return this.dealInfo.success(dealInfo, method)
+//            .let { this.copy(dealInfo = it) }
+    }
+
 
     fun enrich(dealInfo: DealInfo, method: KFunction<*>): DataApplicationContext {
         return this.dealInfo.success(dealInfo, method)

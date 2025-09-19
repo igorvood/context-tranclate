@@ -92,13 +92,6 @@ data class ImmutableNotNullContextParam<T : Any, E: IEnrichError>(
         )
     }
 
-    /**
-     * Проверяет, содержит ли параметр валидное ненулевое значение.
-     */
-    fun hasValue(): Boolean {
-        return param != null && receivedError == null
-    }
-
     companion object{
         /**
          * Создает ожидающий результат (данные еще не получены).

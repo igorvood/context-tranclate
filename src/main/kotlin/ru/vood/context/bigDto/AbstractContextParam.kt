@@ -16,7 +16,7 @@ import kotlin.reflect.KFunction
  *
  * @throws IllegalStateException если состояние параметра неконсистентно (одновременно присутствуют и данные и ошибка)
  */
-abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
+sealed class AbstractContextParam<T, E : IEnrichError>() {
 
     abstract val mutableMethods: List<MutableMethod>
 
@@ -114,14 +114,22 @@ abstract sealed class AbstractContextParam<T, E : IEnrichError>() {
     }
 
     abstract fun success(
-    value: T,
-    method: KFunction<*>
+        value: T,
+        method: KFunction<*>
     ): AbstractContextParam<T, E>
 
     abstract fun error(
         error: E,
         method: KFunction<*>
     ): AbstractContextParam<T, E>
+
+
+    /**
+     * Проверяет, содержит ли параметр валидное ненулевое значение.
+     */
+    fun hasValue(): Boolean {
+        return param != null && receivedError == null
+    }
 
 }
 

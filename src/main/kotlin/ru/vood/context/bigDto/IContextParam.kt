@@ -1,5 +1,8 @@
 package ru.vood.context.bigDto
 
-interface IContextParam {
 
-}
+/**
+ * Базовый интерфейс для параметров контекста.
+ * Представляет собой маркерный интерфейс, который должны реализовывать все параметры контекста.
+ */
+interface IContextParam

@@ -14,7 +14,7 @@ import kotlin.reflect.KFunction
  * @param T тип хранимого параметра (ненулевой)
  * @property param значение параметра, не может быть null при отсутствии ошибки
  * @property receivedError сообщение об ошибке, если в процессе получения параметра произошла ошибка
- * @property allReadyReceived флаг указывающий, что данные были полностью получены
+ * @property allreadyReceived флаг указывающий, что данные были полностью получены
  */
 @Serializable
 data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
@@ -43,7 +43,7 @@ data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
         value: T,
         method: KFunction<*>
     ): ImmutableNotNullContextParam<T, E> {
-        require(!this.allReadyReceived()) {
+        require(!this.allreadyReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }
@@ -57,7 +57,7 @@ data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
         error: E,
         method: KFunction<*>
     ): ImmutableNotNullContextParam<T, E> {
-        require(!this.allReadyReceived()) {
+        require(!this.allreadyReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }

@@ -64,10 +64,7 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
     ): AbstractContextParam<T, E> {
         return when (this) {
             is ImmutableNotNullContextParam<T, E> -> {
-                require(!this.allreadyReceived()) {
-                    val last = this.mutableMethods.last()
-                    "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-                }
+                assertImmutable()
                 this.copy(
                     result = error.left(),
                     mutableMethods = this.mutableMethods.plus(MutableMethod(method))
@@ -75,10 +72,7 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
             }
 
             is ImmutableNullableContextParam<T, E> -> {
-                require(!this.allreadyReceived()) {
-                    val last = this.mutableMethods.last()
-                    "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-                }
+                assertImmutable()
                 this.copy(
                     result = error.left(),
                     mutableMethods = this.mutableMethods.plus(MutableMethod(method))
@@ -96,6 +90,13 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
             )
         }
 
+    }
+
+    private fun AbstractContextParam<T, E>.assertImmutable() {
+        require(!this.allreadyReceived()) {
+            val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+        }
     }
 
 }

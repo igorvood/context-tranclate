@@ -1,6 +1,7 @@
 package ru.vood.context.bigDto
 
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KFunction
 
 
 @Serializable
@@ -35,5 +36,38 @@ data class MutableNullableContextParam<T, E: IEnrichError>(
         get() = true
 
     override fun param(): T? = param
+
+    override fun success(
+        value: T,
+        method: KFunction<*>
+    ): MutableNullableContextParam<T, E> {
+        return this.copy(
+            param = value,
+            allReadyReceived = true,
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
+    }
+
+    override fun error(
+        error: E,
+        method: KFunction<*>
+    ): MutableNullableContextParam<T, E> {
+        return this.copy(
+            receivedError = error,
+            allReadyReceived = true,
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
+
+    }
+
+    companion object{
+        /**
+         * Создает ожидающий результат (данные еще не получены).
+         */
+        fun <T, E : IEnrichError> pendingMutableNullable(): MutableNullableContextParam<T, E> {
+            return MutableNullableContextParam(allReadyReceived = false)
+        }
+
+    }
 
 }

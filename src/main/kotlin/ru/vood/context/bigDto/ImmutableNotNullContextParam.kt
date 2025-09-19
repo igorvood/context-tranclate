@@ -1,6 +1,7 @@
 package ru.vood.context.bigDto
 
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KFunction
 
 /**
  * Реализация [AbstractContextParam] для неизменяемых ненулевых параметров.
@@ -64,10 +65,47 @@ data class ImmutableNotNullContextParam<T : Any, E: IEnrichError>(
         )
     }
 
+    override fun success(
+        value: T,
+        method: KFunction<*>
+    ): ImmutableNotNullContextParam<T, E> {
+        require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+        return this.copy(
+            param = value,
+            allReadyReceived = true,
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
+    }
+
+    override fun error(
+        error: E,
+        method: KFunction<*>
+    ): ImmutableNotNullContextParam<T, E> {
+        require(!this.allReadyReceived) { val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}" }
+
+        return this.copy(
+            receivedError = error,
+            allReadyReceived = true,
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
+    }
+
     /**
      * Проверяет, содержит ли параметр валидное ненулевое значение.
      */
     fun hasValue(): Boolean {
         return param != null && receivedError == null
+    }
+
+    companion object{
+        /**
+         * Создает ожидающий результат (данные еще не получены).
+         */
+        fun <T : Any, E : IEnrichError> pendingImmutableNotNull(): ImmutableNotNullContextParam<T, E> {
+            return ImmutableNotNullContextParam(allReadyReceived = false)
+        }
+
     }
 }

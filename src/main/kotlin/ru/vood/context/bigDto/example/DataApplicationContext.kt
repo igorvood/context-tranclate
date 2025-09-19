@@ -2,11 +2,10 @@ package ru.vood.context.bigDto.example
 
 import kotlinx.serialization.Serializable
 import ru.vood.context.bigDto.*
-import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingImmutableNotNull
-import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingImmutableNullable
-import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingMutableNotNull
-import ru.vood.context.bigDto.AbstractContextParam.Companion.pendingMutableNullable
-import ru.vood.context.bigDto.AbstractContextParam.Companion.success
+import ru.vood.context.bigDto.ImmutableNotNullContextParam.Companion.pendingImmutableNotNull
+import ru.vood.context.bigDto.ImmutableNullableContextParam.Companion.pendingImmutableNullable
+import ru.vood.context.bigDto.MutableNotNullContextParam.Companion.pendingMutableNotNull
+import ru.vood.context.bigDto.MutableNullableContextParam.Companion.pendingMutableNullable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 
@@ -21,8 +20,10 @@ data class DataApplicationContext(
 ) {
 
 
-    fun enrich(prop: KProperty1<DataApplicationContext, AbstractContextParam<*, *>>,
-        someError: SomeError, method: KFunction<*>): DataApplicationContext {
+    fun enrich(
+        prop: KProperty1<DataApplicationContext, AbstractContextParam<*, *>>,
+        someError: SomeError, method: KFunction<*>
+    ): DataApplicationContext {
         TODO()
 //        return this.dealInfo.success(dealInfo, method)
 //            .let { this.copy(dealInfo = it) }

@@ -1,6 +1,7 @@
 package ru.vood.context.bigDto
 
 import kotlinx.serialization.Serializable
+import kotlin.reflect.KFunction
 
 /**
  * Реализация [AbstractContextParam] для неизменяемых нулевых параметров.
@@ -12,7 +13,7 @@ import kotlinx.serialization.Serializable
  * @property allReadyReceived флаг указывающий, что данные были полностью получены
  */
 @Serializable
-data class ImmutableNullableContextParam<T, E: IEnrichError>(
+data class ImmutableNullableContextParam<T, E : IEnrichError>(
     override val param: T? = null,
     override val receivedError: E? = null,
     override val allReadyReceived: Boolean = false,
@@ -47,4 +48,60 @@ data class ImmutableNullableContextParam<T, E: IEnrichError>(
         get() = false
 
     override fun param(): T? = param
+
+    override fun success(
+        value: T,
+        method: KFunction<*>
+    ): ImmutableNullableContextParam<T, E> {
+        require(!this.allReadyReceived) {
+            val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+        }
+
+        return this.copy(
+            param = value,
+            allReadyReceived = true,
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
+    }
+
+    override fun error(
+        error: E,
+        method: KFunction<*>
+    ): ImmutableNullableContextParam<T, E> {
+        require(!this.allReadyReceived) {
+            val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+        }
+        return this.copy(
+            receivedError = error,
+            allReadyReceived = true,
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
+    }
+
+    /**
+     * Создает успешный результат с null значением.
+     */
+    fun successNull(method: KFunction<*>): ImmutableNullableContextParam<T, E> {
+        require(!this.allReadyReceived) {
+            val last = this.mutableMethods.last()
+            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
+        }
+        return this.copy(
+            param = null,
+            allReadyReceived = true,
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
+    }
+
+    companion object{
+        /**
+         * Создает ожидающий результат (данные еще не получены).
+         */
+        fun <T, E : IEnrichError> pendingImmutableNullable(): ImmutableNullableContextParam<T, E> {
+            return ImmutableNullableContextParam(allReadyReceived = false)
+        }
+    }
+
 }

@@ -17,7 +17,7 @@ import kotlin.reflect.KFunction
  * @property allReadyReceived флаг указывающий, что данные были полностью получены
  */
 @Serializable
-data class ImmutableNotNullContextParam<T : Any, E : IEnrichError>(
+data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
     @Contextual
     override val result: Either<E, T>? = null,
     override val mutableMethods: List<MutableMethod> = listOf(),
@@ -72,7 +72,7 @@ data class ImmutableNotNullContextParam<T : Any, E : IEnrichError>(
         /**
          * Создает ожидающий результат (данные еще не получены).
          */
-        fun <T : Any, E : IEnrichError> pendingImmutableNotNull(): ImmutableNotNullContextParam<T, E> {
+        fun <T : IContextParam, E : IEnrichError> pendingImmutableNotNull(): ImmutableNotNullContextParam<T, E> {
             return ImmutableNotNullContextParam()
         }
 

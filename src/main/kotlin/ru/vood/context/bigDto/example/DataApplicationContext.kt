@@ -14,7 +14,7 @@ data class DataApplicationContext(
     val traceId: String,
     val activityId: String,
     val dealInfo: ImmutableNotNullContextParam<DealInfo, SomeError> = pendingImmutableNotNull(),
-    val productInfo: MutableNotNullContextParam<Set<ProductInfo>, SomeError> = pendingMutableNotNull(),
+    val productInfo: MutableNotNullContextParam<ProductInfos, SomeError> = pendingMutableNotNull(),
     val participantInfo: ImmutableNullableContextParam<ParticipantInfo, SomeError> = pendingImmutableNullable(),
     val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
 ) {
@@ -37,7 +37,7 @@ data class DataApplicationContext(
 
     fun enrich(productInfo: Set<ProductInfo>, method: KFunction<*>): DataApplicationContext {
         require(dealInfo.allReadyReceived()) { "не могу принять ProductInfo, он должен быть принят после dealInfo" }
-        return this.productInfo.success(productInfo, method)
+        return this.productInfo.success(ProductInfos(productInfo), method)
             .let { this.copy(productInfo = it) }
     }
 

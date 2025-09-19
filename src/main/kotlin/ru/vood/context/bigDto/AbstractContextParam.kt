@@ -15,7 +15,7 @@ import kotlin.reflect.KFunction
  *
  * @throws IllegalStateException если состояние параметра неконсистентно (одновременно присутствуют и данные и ошибка)
  */
-sealed class AbstractContextParam<out T, E : IEnrichError>() {
+sealed class AbstractContextParam<out T: IContextParam, E : IEnrichError>() {
 
     abstract val mutableMethods: List<MutableMethod>
 

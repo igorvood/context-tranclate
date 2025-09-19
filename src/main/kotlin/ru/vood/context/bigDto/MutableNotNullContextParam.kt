@@ -1,7 +1,6 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
-import arrow.core.left
 import arrow.core.right
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -14,7 +13,7 @@ import kotlin.reflect.KFunction
  * @param T тип хранимого параметра (ненулевой)
  * @property param значение параметра, не может быть null при отсутствии ошибки
  * @property receivedError сообщение об ошибке, если в процессе получения параметра произошла ошибка
- * @property allreadyReceived флаг указывающий, что данные были полностью получены
+ * @property isReceived флаг указывающий, что данные были полностью получены
  */
 @Serializable
 data class MutableNotNullContextParam<T : IContextParam, E : IEnrichError>(

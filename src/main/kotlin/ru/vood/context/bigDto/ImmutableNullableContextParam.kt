@@ -1,7 +1,6 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
-import arrow.core.left
 import arrow.core.right
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -14,7 +13,7 @@ import kotlin.reflect.KFunction
  * @param T тип хранимого параметра (может быть nullable)
  * @property param значение параметра, может быть null даже при успешном выполнении
  * @property receivedError сообщение об ошибке, если в процессе получения параметра произошла ошибка
- * @property allreadyReceived флаг указывающий, что данные были полностью получены
+ * @property isReceived флаг указывающий, что данные были полностью получены
  */
 @Serializable
 data class ImmutableNullableContextParam<T : IContextParam, E : IEnrichError>(
@@ -37,7 +36,7 @@ data class ImmutableNullableContextParam<T : IContextParam, E : IEnrichError>(
         value: T?,
         method: KFunction<*>
     ): ImmutableNullableContextParam<T, E> {
-        require(!this.allreadyReceived()) {
+        require(!this.isReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }
@@ -52,7 +51,7 @@ data class ImmutableNullableContextParam<T : IContextParam, E : IEnrichError>(
      * Создает успешный результат с null значением.
      */
     fun successNull(method: KFunction<*>): ImmutableNullableContextParam<T, E> {
-        require(!this.allreadyReceived()) {
+        require(!this.isReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }

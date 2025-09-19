@@ -1,7 +1,6 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
-import arrow.core.left
 import arrow.core.right
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -30,7 +29,7 @@ data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
         value: T,
         method: KFunction<*>
     ): ImmutableNotNullContextParam<T, E> {
-        require(!this.allreadyReceived()) {
+        require(!this.isReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }

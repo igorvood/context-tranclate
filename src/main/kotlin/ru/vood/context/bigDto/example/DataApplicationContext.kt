@@ -48,7 +48,7 @@ data class DataApplicationContext(
     }
 
     fun enrich(productInfo: Set<ProductInfo>, method: KFunction<*>): DataApplicationContext {
-        require(dealInfo.allreadyReceived()) { "не могу принять ProductInfo, он должен быть принят после dealInfo" }
+        require(dealInfo.isReceived()) { "не могу принять ProductInfo, он должен быть принят после dealInfo" }
         return this.productInfo.success(ProductInfos(productInfo), method)
             .let { this.copy(productInfo = it) }
     }

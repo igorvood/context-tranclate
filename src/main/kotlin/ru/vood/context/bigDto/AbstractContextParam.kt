@@ -41,7 +41,7 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
      *
      * @return true если результат обработки уже доступен(это может быть как наличие значения так и ошибка его получения/вычисления), false в противном случае
      */
-    final fun allreadyReceived(): Boolean = result != null
+    final fun isReceived(): Boolean = result != null
 
     /**
      * Возвращает значение параметра если обработка прошла успешно.
@@ -93,7 +93,7 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
     }
 
     private fun AbstractContextParam<T, E>.assertImmutable() {
-        require(!this.allreadyReceived()) {
+        require(!this.isReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }

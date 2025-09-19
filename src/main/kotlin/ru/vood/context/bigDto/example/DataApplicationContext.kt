@@ -7,6 +7,7 @@ import ru.vood.context.bigDto.ImmutableNullableContextParam.Companion.pendingImm
 import ru.vood.context.bigDto.MutableNotNullContextParam.Companion.pendingMutableNotNull
 import ru.vood.context.bigDto.MutableNullableContextParam.Companion.pendingMutableNullable
 import kotlin.reflect.KFunction
+import kotlin.reflect.KProperty0
 import kotlin.reflect.KProperty1
 
 @Serializable
@@ -17,7 +18,17 @@ data class DataApplicationContext(
     val productInfo: MutableNotNullContextParam<ProductInfos, SomeError> = pendingMutableNotNull(),
     val participantInfo: ImmutableNullableContextParam<ParticipantInfo, SomeError> = pendingImmutableNullable(),
     val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
-) {
+): IBusinessContext {
+
+    override val includedContextParam: List<AbstractContextParam<*, *>>
+        get() = listOf(dealInfo, productInfo, participantInfo, riskInfo)
+    override val includedContextProperty: List<KProperty0<AbstractContextParam<*, *>>>
+        get() = listOf(
+            this::dealInfo,
+            this::productInfo,
+            this::participantInfo,
+            this::riskInfo,
+        )
 
 
     fun enrich(
@@ -31,6 +42,7 @@ data class DataApplicationContext(
 
 
     fun enrich(dealInfo: DealInfo, method: KFunction<*>): DataApplicationContext {
+        val property: KProperty0<ImmutableNotNullContextParam<DealInfo, SomeError>> = this::dealInfo
         return this.dealInfo.success(dealInfo, method)
             .let { this.copy(dealInfo = it) }
     }
@@ -51,13 +63,6 @@ data class DataApplicationContext(
             .let { this.copy(riskInfo = it) }
     }
 
-
     val mutationInfo by lazy { mutableMethods() }
-
-    private fun mutableMethods(): List<Pair<String, MutableMethod>> = dealInfo.mutableMethods.map { "dealInfo" to it }
-        .plus(productInfo.mutableMethods.map { "productInfo" to it })
-        .plus(participantInfo.mutableMethods.map { "participantInfo" to it })
-        .plus(riskInfo.mutableMethods.map { "riskInfo" to it })
-        .sortedBy { it.second.time }
 
 }

@@ -8,7 +8,7 @@ data class ClientContext(
     val requestContext: RequestContext,
     val clientId: String,
     val clientDetails: ClientDetails
-): AbstractBaseContext<ClientContext>() {
+) : AbstractBaseContext<ClientContext>() {
 
     override fun validate(): Boolean = super.validate() && clientId == clientDetails.id
 

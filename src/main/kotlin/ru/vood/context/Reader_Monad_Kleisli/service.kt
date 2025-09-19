@@ -30,10 +30,11 @@ class MockClientService : ClientService {
 @Service
 class MockCartService : CartService {
     override fun getCart(clientId: String, requestId: String): Cart =
-        Cart(clientId, listOf(
-            CartItem("prod1", 2),
-            CartItem("prod2", 1)
-        ), Clock.System.now()
+        Cart(
+            clientId, listOf(
+                CartItem("prod1", 2),
+                CartItem("prod2", 1)
+            ), Clock.System.now()
         )
 }
 

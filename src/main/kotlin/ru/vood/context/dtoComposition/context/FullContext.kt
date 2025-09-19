@@ -1,11 +1,6 @@
 package ru.vood.context.dtoComposition.context
 
-import ru.vood.context.dtoComposition.AbstractBaseContext
-import ru.vood.context.dtoComposition.Cart
-import ru.vood.context.dtoComposition.ClientDetails
-import ru.vood.context.dtoComposition.PricingResult
-import ru.vood.context.dtoComposition.Product
-import ru.vood.context.dtoComposition.RequestInfo
+import ru.vood.context.dtoComposition.*
 import java.math.BigDecimal
 
 data class FullContext(

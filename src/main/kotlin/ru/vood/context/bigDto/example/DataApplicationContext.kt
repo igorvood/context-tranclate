@@ -18,7 +18,7 @@ data class DataApplicationContext(
     val productInfo: MutableNotNullContextParam<ProductInfos, SomeError> = pendingMutableNotNull(),
     val participantInfo: ImmutableNullableContextParam<ParticipantInfo, SomeError> = pendingImmutableNullable(),
     val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
-): IBusinessContext {
+) : IBusinessContext {
 
     override val includedContextParam: List<AbstractContextParam<*, *>>
         get() = listOf(dealInfo, productInfo, participantInfo, riskInfo)

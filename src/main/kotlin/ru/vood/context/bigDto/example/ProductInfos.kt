@@ -8,6 +8,6 @@ import ru.vood.context.bigDto.IContextParam
 @optics
 data class ProductInfos(
     val productInfos: Set<ProductInfo>
-): IContextParam{
+) : IContextParam {
     companion object
 }

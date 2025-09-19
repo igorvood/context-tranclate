@@ -9,7 +9,7 @@ import kotlin.reflect.KFunction
 
 
 @Serializable
-data class MutableNullableContextParam<T: IContextParam, E : IEnrichError>(
+data class MutableNullableContextParam<T : IContextParam, E : IEnrichError>(
     @Contextual
     override val result: Either<E, T?>? = null,
     override val mutableMethods: List<MutableMethod> = listOf()
@@ -50,7 +50,7 @@ data class MutableNullableContextParam<T: IContextParam, E : IEnrichError>(
         /**
          * Создает ожидающий результат (данные еще не получены).
          */
-        fun <T: IContextParam, E : IEnrichError> pendingMutableNullable(): MutableNullableContextParam<T, E> {
+        fun <T : IContextParam, E : IEnrichError> pendingMutableNullable(): MutableNullableContextParam<T, E> {
             return MutableNullableContextParam()
         }
 

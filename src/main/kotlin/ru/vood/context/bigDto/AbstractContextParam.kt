@@ -1,5 +1,6 @@
 package ru.vood.context.bigDto
 
+import arrow.core.Either
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 import kotlin.reflect.KFunction
@@ -29,6 +30,14 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
      * - параметр по своей природе может быть null
      */
     protected abstract val param: T?
+    /**
+     * Сообщение об ошибке, возникшей при получении параметра.
+     *
+     * @return текст ошибки или null если ошибок не было
+     */
+    abstract val receivedError: E?
+
+//    abstract val result: Either<E, T?>
 
     /**
      * Флаг указывающий, является ли реализация параметра изменяемой.
@@ -40,12 +49,6 @@ sealed class AbstractContextParam<T, E : IEnrichError>() {
     abstract val allReadyReceived: Boolean
 //            =  param != null || receivedError != null
 
-    /**
-     * Сообщение об ошибке, возникшей при получении параметра.
-     *
-     * @return текст ошибки или null если ошибок не было
-     */
-    abstract val receivedError: E?
 
 
     /**

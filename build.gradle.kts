@@ -4,6 +4,7 @@ plugins {
     kotlin("plugin.serialization") version "2.2.10"
     id("org.springframework.boot") version "3.5.5"
     id("io.spring.dependency-management") version "1.1.7"
+    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
 }
 
 group = "ru.vood.context.receivers.example"
@@ -20,7 +21,13 @@ repositories {
     mavenCentral()
 }
 
+val arrowVersion = "2.1.2"
 dependencies {
+    implementation(platform ("io.arrow-kt:arrow-stack:$arrowVersion"))
+    api("io.arrow-kt:arrow-core")
+    api("io.arrow-kt:arrow-optics")
+    ksp("io.arrow-kt:arrow-optics-ksp-plugin:$arrowVersion")
+
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")

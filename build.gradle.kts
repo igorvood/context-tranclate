@@ -5,6 +5,7 @@ plugins {
     id("org.springframework.boot") version "3.5.5"
     id("io.spring.dependency-management") version "1.1.7"
     id("com.google.devtools.ksp") version "2.1.21-2.0.2"
+    `maven-publish`
 
 //    id("com.google.devtools.ksp") version "2.2.10-2.0.2"
 }

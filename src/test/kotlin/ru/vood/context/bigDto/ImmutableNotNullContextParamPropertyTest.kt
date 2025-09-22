@@ -5,16 +5,11 @@ import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.string
 import io.kotest.property.checkAll
-import kotlin.reflect.KFunction
 
 class ImmutableNotNullContextParamPropertyTest : StringSpec({
 
     "param() should always return the same value that was set by success()" {
         checkAll(Arb.string()) { testString ->
-            // Создаем экземпляр класса с функцией
-            val testFunctions = TestFunctions()
-            val testMethod: KFunction<*> = testFunctions::testMethod
-
             val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
             val testValue = TestParam(testString)
 
@@ -28,10 +23,6 @@ class ImmutableNotNullContextParamPropertyTest : StringSpec({
 
     "success() should always add method to mutableMethods" {
         checkAll(Arb.string()) { testString ->
-            // Создаем экземпляр класса с функцией
-            val testFunctions = TestFunctions()
-            val testMethod: KFunction<*> = testFunctions::testMethod
-
             val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
             val testValue = TestParam(testString)
 

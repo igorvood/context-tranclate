@@ -8,25 +8,12 @@ import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
-import kotlin.reflect.KFunction
-
-// Тестовые реализации интерфейсов
-data class TestParam(val value: String) : IContextParam
-data class TestError(val message: String) : IEnrichError
-
-// Выносим тестовую функцию в область видимости класса
-class TestFunctions {
-    fun testMethod() = Unit
-}
 
 class ImmutableNotNullContextParamTest : BehaviorSpec({
 
     given("ImmutableNotNullContextParam") {
 
         // Создаем экземпляр класса с функцией
-        val testFunctions = TestFunctions()
-        val testMethod: KFunction<*> = testFunctions::testMethod
-
         `when`("создается через pendingImmutableNotNull") {
             then("должен быть в состоянии pending") {
                 val param = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()

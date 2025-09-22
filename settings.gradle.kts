@@ -1,1 +1,1 @@
-rootProject.name = "context-tranclate"
+rootProject.name = "context-translate"

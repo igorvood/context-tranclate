@@ -12,7 +12,7 @@ plugins {
 
 group = "ru.vood.context.receivers.example"
 version = "0.0.1-SNAPSHOT"
-description = "context-tranclate"
+description = "context-translate"
 
 java {
     toolchain {

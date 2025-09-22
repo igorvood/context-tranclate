@@ -24,6 +24,7 @@ repositories {
 }
 
 val arrowVersion = "2.1.2"
+val kotestVersion = "5.8.0"
 dependencies {
     implementation(platform ("io.arrow-kt:arrow-stack:$arrowVersion"))
     api("io.arrow-kt:arrow-core")
@@ -44,6 +45,10 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+    testImplementation("io.kotest:kotest-runner-junit5:$kotestVersion")
+    testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
+    testImplementation("io.kotest:kotest-property:$kotestVersion")
+    testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
 }
 
 kotlin {

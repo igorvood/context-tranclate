@@ -1,7 +1,6 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
-import arrow.core.left
 import arrow.core.right
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable

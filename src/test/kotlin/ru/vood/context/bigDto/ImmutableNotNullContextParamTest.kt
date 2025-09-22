@@ -3,14 +3,12 @@ package ru.vood.context.bigDto
 import arrow.core.Either
 import arrow.core.right
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.core.spec.style.FunSpec
 import io.kotest.datatest.withData
 import io.kotest.matchers.collections.shouldHaveSize
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.types.shouldBeInstanceOf
 import kotlin.reflect.KFunction
-import kotlin.reflect.full.createType
 
 // Тестовые реализации интерфейсов
 data class TestParam(val value: String) : IContextParam
@@ -78,39 +76,39 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
         }
 
 //        context("параметризированные тесты для метода param()") {
-            withData(
-                nameFn = { (value, expected) -> "param() with $value should return $expected" },
-                TestParam("hello") to "hello",
-                TestParam("world") to "world",
-                TestParam("") to "",
-                TestParam("123") to "123"
-            ) { (input, expected) ->
-                val param = ImmutableNotNullContextParam(
-                    result = input.right(),
-                    mutableMethods = listOf(MutableMethod(testMethod))
-                )
+        withData(
+            nameFn = { (value, expected) -> "param() with $value should return $expected" },
+            TestParam("hello") to "hello",
+            TestParam("world") to "world",
+            TestParam("") to "",
+            TestParam("123") to "123"
+        ) { (input, expected) ->
+            val param = ImmutableNotNullContextParam(
+                result = input.right(),
+                mutableMethods = listOf(MutableMethod(testMethod))
+            )
 
-                val result = param.param()
-                result shouldBe input
-                result.value shouldBe expected
-            }
+            val result = param.param()
+            result shouldBe input
+            result.value shouldBe expected
+        }
 //        }
 
 //        context("параметризированные тесты для метода success()") {
-            withData(
-                nameFn = { (value, methodName) -> "success() with $value should track method $methodName" },
-                TestParam("first") to "ru.vood.context.bigDto.TestFunctions.testMethod",
-                TestParam("second") to "ru.vood.context.bigDto.TestFunctions.testMethod",
-                TestParam("third") to "ru.vood.context.bigDto.TestFunctions.testMethod"
-            ) { (value, expectedMethodName) ->
-                val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+        withData(
+            nameFn = { (value, methodName) -> "success() with $value should track method $methodName" },
+            TestParam("first") to "ru.vood.context.bigDto.TestFunctions.testMethod",
+            TestParam("second") to "ru.vood.context.bigDto.TestFunctions.testMethod",
+            TestParam("third") to "ru.vood.context.bigDto.TestFunctions.testMethod"
+        ) { (value, expectedMethodName) ->
+            val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
 
-                val result = initial.success(value, testMethod)
+            val result = initial.success(value, testMethod)
 
-                result.result shouldBe value.right()
-                result.mutableMethods shouldHaveSize 1
-                result.mutableMethods.first().methodName shouldBe expectedMethodName
-            }
+            result.result shouldBe value.right()
+            result.mutableMethods shouldHaveSize 1
+            result.mutableMethods.first().methodName shouldBe expectedMethodName
+        }
 //        }
 
         `when`("параметр содержит ошибку") {

@@ -61,3 +61,34 @@ kotlin {
 tasks.withType<Test> {
     useJUnitPlatform()
 }
+
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            from(components["java"])
+
+            // Дополнительная информация о публикации
+            pom {
+                name.set("Context Translate Example")
+                description.set(project.description)
+                url.set("https://github.com/your-repo/context-translate")
+
+                licenses {
+                    license {
+                        name.set("The Apache License, Version 2.0")
+                        url.set("http://www.apache.org/licenses/LICENSE-2.0.txt")
+                    }
+                }
+
+                developers {
+                    developer {
+                        id.set("your-id")
+                        name.set("Your Name")
+                        email.set("your.email@example.com")
+                    }
+                }
+            }
+        }
+    }
+}

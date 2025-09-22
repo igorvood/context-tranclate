@@ -4,8 +4,6 @@ import kotlin.reflect.KProperty0
 
 interface IBusinessContext {
 
-    val includedContextParam: List<AbstractContextParam<*, *>>
-
     val includedContextProperty: List<KProperty0<AbstractContextParam<*, *>>>
 
     fun mutableMethods(): List<Pair<String, MutableMethod>> {

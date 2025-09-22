@@ -20,8 +20,6 @@ data class DataApplicationContext(
     val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
 ) : IBusinessContext {
 
-    override val includedContextParam: List<AbstractContextParam<*, *>>
-        get() = listOf(dealInfo, productInfo, participantInfo, riskInfo)
     override val includedContextProperty: List<KProperty0<AbstractContextParam<*, *>>>
         get() = listOf(
             this::dealInfo,

@@ -21,6 +21,7 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -50,6 +51,11 @@ dependencies {
     testImplementation("io.kotest:kotest-assertions-core:$kotestVersion")
     testImplementation("io.kotest:kotest-property:$kotestVersion")
     testImplementation("io.kotest:kotest-framework-datatest:$kotestVersion")
+    // эта либа тут https://github.com/voodProduct/kotlin-business-flow-abstraction
+    testImplementation("ru.vood.kotlin:test-util:1.0.0")
+//    testImplementation("org.reflections:reflections:0.10.2")
+
+
 }
 
 kotlin {

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import ru.vood.context.bigDto.example.enrich.enrichContext
+import ru.vood.context.bigDto.json
 import java.time.LocalTime
 
 class DataApplicationContextTest {
@@ -14,11 +15,6 @@ class DataApplicationContextTest {
         traceId = "traceId",
         activityId = "activityId"
     )
-
-    val json = Json {
-        prettyPrint = true
-        serializersModule = ArrowModule
-    }
 
     @Test
     fun getTraceId() {

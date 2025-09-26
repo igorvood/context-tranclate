@@ -34,6 +34,12 @@ data class MutableNullableContextParam<T : IContextParam, E : IEnrichError>(
         )
     }
 
+    /**
+     * Создает успешный результат с null значением.
+     */
+    fun successNull(method: KFunction<*>): MutableNullableContextParam<T, E> = this.success(null, method)
+
+
     companion object {
         /**
          * Создает ожидающий результат (данные еще не получены).

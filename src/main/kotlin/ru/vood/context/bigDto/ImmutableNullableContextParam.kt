@@ -50,16 +50,7 @@ data class ImmutableNullableContextParam<T : IContextParam, E : IEnrichError>(
     /**
      * Создает успешный результат с null значением.
      */
-    fun successNull(method: KFunction<*>): ImmutableNullableContextParam<T, E> {
-        require(!this.isReceived()) {
-            val last = this.mutableMethods.last()
-            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-        }
-        return this.copy(
-            result = null.right(),
-            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-        )
-    }
+    fun successNull(method: KFunction<*>): ImmutableNullableContextParam<T, E> = success(null, method)
 
     companion object {
         /**

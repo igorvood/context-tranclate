@@ -1,7 +1,6 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
-import arrow.core.flatMap
 import arrow.core.left
 import kotlin.reflect.KFunction
 
@@ -64,11 +63,11 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
      * Создает новый экземпляр параметра контекста с указанной ошибкой.
      * Используется для обработки ошибок при обогащении контекста.
      *
-     * @param error ошибка типа [E], которая произошла при обработке
+     * @param enrichError ошибка типа [E], которая произошла при обработке
      * @param method функция, в которой произошла ошибка
      * @return новый экземпляр [AbstractContextParam] с установленной ошибкой
      */
-    fun error(
+    fun enrichError(
         error: E,
         method: KFunction<*>
     ): AbstractContextParam<T, E> {

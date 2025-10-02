@@ -1,4 +1,4 @@
-package ru.vood.context.bigDto.example
+package ru.vood.context.bigDto.example.dto
 
 import arrow.optics.optics
 import kotlinx.serialization.Serializable

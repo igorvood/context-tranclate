@@ -1,5 +1,6 @@
-package ru.vood.context.bigDto.example
+package ru.vood.context.bigDto.example.dto
 
+import arrow.core.right
 import kotlinx.serialization.Serializable
 import ru.vood.context.bigDto.*
 import ru.vood.context.bigDto.ImmutableNotNullContextParam.Companion.pendingImmutableNotNull
@@ -28,11 +29,61 @@ data class DataApplicationContext(
             this::riskInfo,
         )
 
-
-    fun enrich(
-        prop: KProperty1<DataApplicationContext, AbstractContextParam<*, *>>,
-        someError: SomeError, method: KFunction<*>
+    fun <T : IContextParam, E : IEnrichError> enrichError(
+        error: E,
+        prop: KProperty1<DataApplicationContext, AbstractContextParam<T, E>>,
+        method: KFunction<*>
     ): DataApplicationContext {
+        val enrichError = prop(this).enrichError(error, method)
+        val context = when(prop){
+            DataApplicationContext::dealInfo -> copy(dealInfo = enrichError as ImmutableNotNullContextParam<DealInfo, SomeError>)
+            DataApplicationContext::productInfo -> copy(productInfo = enrichError as MutableNotNullContextParam<ProductInfos, SomeError>)
+            DataApplicationContext::participantInfo -> copy(participantInfo = enrichError as ImmutableNullableContextParam<ParticipantInfo, SomeError>)
+            DataApplicationContext::riskInfo -> copy(riskInfo = enrichError as MutableNullableContextParam<RiskInfo, SomeError>)
+            else -> error("Unknown property: $prop")
+        }
+
+        return context
+    }
+
+
+
+    fun <T : IContextParam, E : IEnrichError> enrich(
+        data: T?,
+        prop: KProperty1<DataApplicationContext, AbstractContextParam<T, E>>,
+        method: KFunction<*>
+    ): DataApplicationContext {
+        val prop1 = prop(this)
+        val param = when (prop1) {
+            is ImmutableNotNullContextParam<T, E> -> {
+//                assertImmutable()
+                prop1.copy(
+                    result = data?.right(),
+                    mutableMethods = prop1.mutableMethods.plus(MutableMethod(method))
+                )
+            }
+
+            is ImmutableNullableContextParam<T, E> -> {
+//                assertImmutable()
+                prop1.copy(
+                    result = data?.right(),
+                    mutableMethods = prop1.mutableMethods.plus(MutableMethod(method))
+                )
+            }
+
+            is MutableNotNullContextParam<T, E> -> prop1.copy(
+                result = data?.right(),
+                mutableMethods = prop1.mutableMethods.plus(MutableMethod(method))
+            )
+
+            is MutableNullableContextParam<T, E> -> prop1.copy(
+                result = data?.right(),
+                mutableMethods = prop1.mutableMethods.plus(MutableMethod(method))
+            )
+        }
+
+
+
         TODO()
 //        return this.dealInfo.success(dealInfo, method)
 //            .let { this.copy(dealInfo = it) }

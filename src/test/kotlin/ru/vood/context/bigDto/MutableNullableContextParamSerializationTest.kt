@@ -5,8 +5,8 @@ import arrow.core.right
 import com.ocadotechnology.gembus.test.Arranger
 import io.kotest.core.spec.style.FunSpec
 import io.kotest.matchers.shouldBe
-import ru.vood.context.bigDto.example.DealInfo
-import ru.vood.context.bigDto.example.SomeError
+import ru.vood.context.bigDto.example.dto.DealInfo
+import ru.vood.context.bigDto.example.dto.SomeError
 
 // Дополнительные тесты для проверки сериализации (если нужно)
 class MutableNullableContextParamSerializationTest : FunSpec({

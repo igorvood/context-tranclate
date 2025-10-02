@@ -22,12 +22,14 @@ data class DataApplicationContext(
 ) : IBusinessContext<DataApplicationContext> {
 
     override val propsCTXMeta: List<CTXMeta<DataApplicationContext, *, *, *>>
-        get() = listOf(
-            this::dealInfo withCopy { q, w -> q.copy(dealInfo = w) },
-            this::productInfo withCopy { q, w -> q.copy(productInfo = w) },
-            this::dealInfo withCopy { q, w -> q.copy(dealInfo = w) },
-            this::dealInfo withCopy { q, w -> q.copy(dealInfo = w) }
-        )
+        get() {
+            return listOf(
+                DataApplicationContext::dealInfo withCopy { q, w -> q.copy(dealInfo = w) } ,
+                (DataApplicationContext::productInfo withCopy { q, w -> q.copy(productInfo = w) }) erichedAfther DataApplicationContext::dealInfo,
+                DataApplicationContext::participantInfo withCopy { q, w -> q.copy(participantInfo = w) } erichedAfther DataApplicationContext::productInfo,
+                DataApplicationContext::riskInfo withCopy { q, w -> q.copy(riskInfo = w) } erichedAfther DataApplicationContext::participantInfo erichedAfther DataApplicationContext::dealInfo
+            )
+        }
 
     fun <T : IContextParam, E : IEnrichError> enrichError1(
         error: E,

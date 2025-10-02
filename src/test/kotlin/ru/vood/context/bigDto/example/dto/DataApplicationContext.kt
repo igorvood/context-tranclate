@@ -19,23 +19,23 @@ data class DataApplicationContext(
     val productInfo: MutableNotNullContextParam<ProductInfos, SomeError> = pendingMutableNotNull(),
     val participantInfo: ImmutableNullableContextParam<ParticipantInfo, SomeError> = pendingImmutableNullable(),
     val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
-) : IBusinessContext {
+) : IBusinessContext<DataApplicationContext> {
 
-    override val includedContextProperty: List<KProperty0<AbstractContextParam<*, *>>>
+    override val propsCTXMeta: List<CTXMeta<DataApplicationContext, *, *, *>>
         get() = listOf(
-            this::dealInfo,
-            this::productInfo,
-            this::participantInfo,
-            this::riskInfo,
+            this::dealInfo withCopy { q, w -> q.copy(dealInfo = w) },
+            this::productInfo withCopy { q, w -> q.copy(productInfo = w) },
+            this::dealInfo withCopy { q, w -> q.copy(dealInfo = w) },
+            this::dealInfo withCopy { q, w -> q.copy(dealInfo = w) }
         )
 
-    fun <T : IContextParam, E : IEnrichError> enrichError(
+    fun <T : IContextParam, E : IEnrichError> enrichError1(
         error: E,
         prop: KProperty1<DataApplicationContext, AbstractContextParam<T, E>>,
         method: KFunction<*>
     ): DataApplicationContext {
         val enrichError = prop(this).enrichError(error, method)
-        val context = when(prop){
+        val context = when (prop) {
             DataApplicationContext::dealInfo -> copy(dealInfo = enrichError as ImmutableNotNullContextParam<DealInfo, SomeError>)
             DataApplicationContext::productInfo -> copy(productInfo = enrichError as MutableNotNullContextParam<ProductInfos, SomeError>)
             DataApplicationContext::participantInfo -> copy(participantInfo = enrichError as ImmutableNullableContextParam<ParticipantInfo, SomeError>)
@@ -45,7 +45,6 @@ data class DataApplicationContext(
 
         return context
     }
-
 
 
     fun <T : IContextParam, E : IEnrichError> enrich(

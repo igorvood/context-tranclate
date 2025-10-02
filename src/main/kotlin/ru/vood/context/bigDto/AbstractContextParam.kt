@@ -2,6 +2,7 @@ package ru.vood.context.bigDto
 
 import arrow.core.Either
 import arrow.core.left
+import arrow.core.right
 import kotlin.reflect.KFunction
 
 /**
@@ -100,6 +101,40 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
         }
 
     }
+
+//    fun enrichData(
+//        data: T,
+//        method: KFunction<*>
+//    ): AbstractContextParam<T, E> {
+//        return when (this) {
+//            is ImmutableNotNullContextParam<T, E> -> {
+//                assertImmutable()
+//                this.copy(
+//                    result = data.right(),
+//                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+//                )
+//            }
+//
+//            is ImmutableNullableContextParam<T, E> -> {
+//                assertImmutable()
+//                this.copy(
+//                    result = data.right(),
+//                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+//                )
+//            }
+//
+//            is MutableNotNullContextParam<T, E> -> this.copy(
+//                result = error.left(),
+//                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+//            )
+//
+//            is MutableNullableContextParam<T, E> -> this.copy(
+//                result = error.left(),
+//                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+//            )
+//        }
+//
+//    }
 
     private fun AbstractContextParam<T, E>.assertImmutable() {
         require(!this.isReceived()) {

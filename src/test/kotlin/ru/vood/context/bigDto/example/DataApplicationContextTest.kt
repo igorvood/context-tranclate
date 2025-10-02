@@ -3,21 +3,12 @@ package ru.vood.context.bigDto.example
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
-import ru.vood.context.bigDto.example.dto.DataApplicationContext
-import ru.vood.context.bigDto.example.dto.DealInfo
-import ru.vood.context.bigDto.example.dto.ParticipantInfo
-import ru.vood.context.bigDto.example.dto.ProductInfo
-import ru.vood.context.bigDto.example.dto.RiskInfo
+import ru.vood.context.bigDto.example.dto.*
 import ru.vood.context.bigDto.example.enrich.enrichContext
 import ru.vood.context.bigDto.json
 import java.time.LocalTime
 
 class DataApplicationContextTest {
-
-    val dataApplicationContext = DataApplicationContext(
-        traceId = "traceId",
-        activityId = "activityId"
-    )
 
     @Test
     fun getTraceId() {

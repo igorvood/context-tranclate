@@ -1,6 +1,7 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.right
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
@@ -38,6 +39,18 @@ data class MutableNullableContextParam<T : IContextParam, E : IEnrichError>(
      * Создает успешный результат с null значением.
      */
     fun successNull(method: KFunction<*>): MutableNullableContextParam<T, E> = this.success(null, method)
+
+
+    fun <C> map(f: (right: T?) -> C): Either<E, C>? {
+        return result?.map { f(it) }
+    }
+
+    fun <C> flatMap(f: (right: T?) -> Either<E, C>): Either<E, C>? {
+        return result?.flatMap { f(it) }
+    }
+    fun <C> fold(ifLeft: (left: E) -> C, ifRight: (right: T?) -> C): C? {
+        return result?.fold({ ifLeft(it) }, { ifRight(it) })
+    }
 
 
     companion object {

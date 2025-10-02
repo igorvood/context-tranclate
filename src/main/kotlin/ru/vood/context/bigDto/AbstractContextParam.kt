@@ -1,6 +1,7 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
+import arrow.core.flatMap
 import arrow.core.left
 import kotlin.reflect.KFunction
 
@@ -29,7 +30,16 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
      * Может быть null если параметр еще не получен/вычислен.
      */
     abstract val result: Either<E, T?>?
+/*
+    protected fun <C> map(f: (right: T?) -> C): Either<E, C>? {
+        return result?.map { f(it) }
+    }
 
+    protected fun <C> flatMap(f: (right: T?) -> Either<E, C>): Either<E, C>? {
+        return result?.flatMap { f(it) }
+    }
+*/
+// public inline fun <A, B, C> Either<A, B>.flatMap(f: (right: B) -> Either<A, C>): Either<A, C> {
     /**
      * Указывает, является ли параметр изменяемым.
      * Если true - параметр может быть изменен после создания, иначе параметр immutable.

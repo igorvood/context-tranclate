@@ -20,6 +20,7 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
 
     /**
      * Список методов, изменившие состояние параметра контекста.
+     * Каждый элемент содержит информацию о методе, который модифицировал состояние параметра.
      */
     abstract val mutableMethods: List<MutableMethod>
 
@@ -40,14 +41,16 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
     /**
      * Проверяет, был ли параметр уже обработан и результат получен.
      *
-     * @return true если результат обработки уже доступен(это может быть как наличие значения так и ошибка его получения/вычисления), false в противном случае
+     * @return true если результат обработки уже доступен (это может быть как наличие значения так и ошибка его получения/вычисления),
+     *         false в противном случае
      */
     final fun isReceived(): Boolean = result != null
 
     /**
      * Возвращает значение параметра если обработка прошла успешно.
+     *
      * @throws IllegalStateException если параметр null или есть ошибка
-     * @return параметр типа [T] если он успешно обработан, null в противном случае
+     * @return параметр типа [T] если он успешно обработан
      */
     fun paramOrThrow(): T {
         return (result ?: error("Parameter not yet available"))
@@ -57,13 +60,19 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
             )
     }
 
+    /**
+     * Возвращает результат обработки параметра.
+     *
+     * @throws IllegalStateException если результат еще не доступен
+     * @return результат типа [Either] содержащий либо ошибку, либо значение параметра
+     */
     fun resultOrThrow(): Either<E, T> = result ?: error("Result not yet available")
 
     /**
      * Создает новый экземпляр параметра контекста с указанной ошибкой.
      * Используется для обработки ошибок при обогащении контекста.
      *
-     * @param enrichError ошибка типа [E], которая произошла при обработке
+     * @param error ошибка типа [E], которая произошла при обработке
      * @param method функция, в которой произошла ошибка
      * @return новый экземпляр [AbstractContextParam] с установленной ошибкой
      */
@@ -86,26 +95,42 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
         method: KFunction<*>
     ): AbstractContextParam<T, E> = enrich({ value.right() }, method)
 
+    /**
+     * Основной метод для обогащения параметра контекста.
+     * Принимает функцию, которая возвращает результат обработки в виде Either,
+     * и добавляет информацию о вызванном методе в историю изменений.
+     *
+     * @param f функция, возвращающая результат обработки параметра
+     * @param method функция, которая выполняет обогащение (для трассировки)
+     * @return новый экземпляр [AbstractContextParam] с обновленным состоянием
+     */
     fun enrich(f: () -> Either<E, T>, method: KFunction<*>): AbstractContextParam<T, E> = when (this) {
+        // Обработка для неизменяемого параметра
         is ImmutableContextParam<T, E> -> {
+            // Проверяем, что параметр еще не был установлен
             assertImmutable()
+            // Создаем копию с новым результатом и обновленной историей методов
             this.copy(
                 result = f(),
                 mutableMethods = this.mutableMethods.plus(MutableMethod(method))
             )
         }
+        // Обработка для изменяемого параметра
         is MutableContextParam<T, E> -> this.copy(
             result = f(),
             mutableMethods = this.mutableMethods.plus(MutableMethod(method))
         )
     }
 
+    /**
+     * Вспомогательный метод для проверки, что неизменяемый параметр еще не был установлен.
+     *
+     * @throws IllegalArgumentException если параметр уже был получен/установлен
+     */
     private fun AbstractContextParam<T, E>.assertImmutable() {
         require(!this.isReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
         }
     }
-
 }
-

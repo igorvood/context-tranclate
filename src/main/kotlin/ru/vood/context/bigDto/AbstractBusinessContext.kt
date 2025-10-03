@@ -15,18 +15,18 @@ infix fun <BC : AbstractBusinessContext<BC>, T : IContextParam?, E : IEnrichErro
     return CTXMeta(this, fc)
 }
 
-infix fun <BC : AbstractBusinessContext<BC>, T : IContextParam?, E : IEnrichError, CP : AbstractContextParam<T, E>> CTXMeta<BC, T, E, CP>.erichedAfther(
+infix fun <BC : AbstractBusinessContext<BC>, T : IContextParam?, E : IEnrichError, CP : AbstractContextParam<T, E>> CTXMeta<BC, T, E, CP>.enrichedAfter(
     otherProp: KProperty1<BC, *>
 ): CTXMeta<BC, T, E, CP> {
     require(this.prop.name != otherProp.name) { "property '${this.prop.name}' cannot be enriched after it self" }
     return this.copy(mustEnrichedAfter = this.mustEnrichedAfter.plus(otherProp.name))
 }
 
-infix fun <BC : AbstractBusinessContext<BC>, T : IContextParam?, E : IEnrichError, CP : AbstractContextParam<T, E>> CTXMeta<BC, T, E, CP>.erichedAfther(
+infix fun <BC : AbstractBusinessContext<BC>, T : IContextParam?, E : IEnrichError, CP : AbstractContextParam<T, E>> CTXMeta<BC, T, E, CP>.enrichedAfter(
     otherProps: List<KProperty1<BC, *>>
 ): CTXMeta<BC, T, E, CP> = otherProps
     .fold(this) { acc, otherProp ->
-        acc erichedAfther otherProp
+        acc enrichedAfter otherProp
     }
 
 

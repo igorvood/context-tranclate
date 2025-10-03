@@ -19,9 +19,9 @@ data class DataApplicationContext(
         get() {
             return listOf(
                 DataApplicationContext::dealInfo withCopy { q, w -> q.copy(dealInfo = w) },
-                DataApplicationContext::productInfo withCopy { q, w -> q.copy(productInfo = w) } erichedAfther DataApplicationContext::dealInfo,
-                DataApplicationContext::participantInfo withCopy { q, w -> q.copy(participantInfo = w) } erichedAfther DataApplicationContext::productInfo erichedAfther DataApplicationContext::dealInfo,
-                DataApplicationContext::riskInfo withCopy { q, w -> q.copy(riskInfo = w) } erichedAfther listOf(
+                DataApplicationContext::productInfo withCopy { q, w -> q.copy(productInfo = w) } enrichedAfter DataApplicationContext::dealInfo,
+                DataApplicationContext::participantInfo withCopy { q, w -> q.copy(participantInfo = w) } enrichedAfter DataApplicationContext::productInfo enrichedAfter DataApplicationContext::dealInfo,
+                DataApplicationContext::riskInfo withCopy { q, w -> q.copy(riskInfo = w) } enrichedAfter listOf(
                     DataApplicationContext::participantInfo,
                     DataApplicationContext::dealInfo
                 )

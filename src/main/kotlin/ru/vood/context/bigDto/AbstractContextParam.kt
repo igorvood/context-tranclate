@@ -2,6 +2,7 @@ package ru.vood.context.bigDto
 
 import arrow.core.Either
 import arrow.core.left
+import arrow.core.right
 import kotlin.reflect.KFunction
 
 /**
@@ -15,7 +16,7 @@ import kotlin.reflect.KFunction
  * @property result результат обработки параметра в виде [Either], содержащий либо ошибку [E], либо значение параметра [T]
  * @property mutableParam флаг, указывающий является ли параметр изменяемым
  */
-sealed class AbstractContextParam<out T : IContextParam?, E : IEnrichError>() {
+sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
 
     /**
      * Список методов, изменившие состояние параметра контекста.
@@ -28,16 +29,16 @@ sealed class AbstractContextParam<out T : IContextParam?, E : IEnrichError>() {
      * - [Either.Right] содержит параметр типа [T] если обработка прошла успешно
      * Может быть null если параметр еще не получен/вычислен.
      */
-    abstract val result: Either<E, T?>?
-/*
-    protected fun <C> map(f: (right: T?) -> C): Either<E, C>? {
-        return result?.map { f(it) }
-    }
+    abstract val result: Either<E, T>?
+    /*
+        protected fun <C> map(f: (right: T?) -> C): Either<E, C>? {
+            return result?.map { f(it) }
+        }
 
-    protected fun <C> flatMap(f: (right: T?) -> Either<E, C>): Either<E, C>? {
-        return result?.flatMap { f(it) }
-    }
-*/
+        protected fun <C> flatMap(f: (right: T?) -> Either<E, C>): Either<E, C>? {
+            return result?.flatMap { f(it) }
+        }
+    */
 // public inline fun <A, B, C> Either<A, B>.flatMap(f: (right: B) -> Either<A, C>): Either<A, C> {
     /**
      * Указывает, является ли параметр изменяемым.
@@ -57,7 +58,15 @@ sealed class AbstractContextParam<out T : IContextParam?, E : IEnrichError>() {
      * @throws IllegalStateException если параметр null или есть ошибка
      * @return параметр типа [T] если он успешно обработан, null в противном случае
      */
-    abstract fun param(): T?
+    fun param(): T {
+        return (result ?: error("Parameter not yet available"))
+            .fold(
+                { error("Parameter not available due to error: $it") }, {
+                    it
+                }
+            )
+    }
+
 
     /**
      * Создает новый экземпляр параметра контекста с указанной ошибкой.
@@ -79,8 +88,37 @@ sealed class AbstractContextParam<out T : IContextParam?, E : IEnrichError>() {
                     mutableMethods = this.mutableMethods.plus(MutableMethod(method))
                 )
             }
+
             is MutableContextParam<T, E> -> this.copy(
                 result = error.left(),
+                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+            )
+        }
+    }
+
+    /**
+     * Устанавливает успешное значение для параметра и возвращает новый экземпляр с обновленным состоянием.
+     * Проверяет, что параметр еще не был установлен ранее (так как он immutable).
+     *
+     * @param value значение параметра для установки
+     * @param method функция, в которой устанавливается значение (для трассировки)
+     * @return новый экземпляр [ImmutableContextParam] с установленным значением
+     * @throws IllegalArgumentException если параметр уже был установлен ранее
+     */
+    fun enrichOk(
+        value: T,
+        method: KFunction<*>
+    ): AbstractContextParam<T, E>  {
+        return when (this) {
+            is ImmutableContextParam<T, E> -> {
+                assertImmutable()
+                this.copy(
+                    result = value.right(),
+                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+                )
+            }
+            is MutableContextParam<T, E> -> this.copy(
+                result = value.right(),
                 mutableMethods = this.mutableMethods.plus(MutableMethod(method))
             )
         }

@@ -15,33 +15,34 @@ class DataApplicationContextTest {
 
         println(json.encodeToString(DataApplicationContext.serializer(), dataApplicationContext))
         val enriched = dataApplicationContext
-            .enrich(enrichContext<DealInfo>(), this::getTraceId)
-            .enrich(enrichContext<ParticipantInfo>(), this::getTraceId)
-            .enrich(enrichContext<RiskInfo>(), this::getTraceId)
-            .enrich(enrichContext<Set<ProductInfo>>(), this::getTraceId)
+            .enrichOk(DataApplicationContext::dealInfo, enrichContext<DealInfo>(), this::getTraceId)
+            .enrichOk(DataApplicationContext::productInfo,enrichContext<ProductInfos>(), this::getTraceId)
+            .enrichOk(DataApplicationContext::participantInfo,enrichContext<ParticipantInfo>(), this::getTraceId)
+            .enrichOk(DataApplicationContext::riskInfo,enrichContext<RiskInfo>(), this::getTraceId)
+
 
         println(enriched)
 
 
         val assertThrows = Assertions.assertThrows(
             IllegalArgumentException::class.java,
-            { enriched.enrich(enrichContext<DealInfo>(), this::testMethod) }
+            { enriched.enrichOk(DataApplicationContext::dealInfo, enrichContext<DealInfo>(), this::testMethod) }
         )
 
         println(assertThrows.message)
 
         val assertThrows1 = Assertions.assertThrows(
             IllegalArgumentException::class.java,
-            { enriched.enrich(enrichContext<ParticipantInfo>(), this::testMethod) }
+            { enriched.enrichOk(DataApplicationContext::participantInfo,enrichContext<ParticipantInfo>(), this::testMethod) }
         )
 
         println(assertThrows1.message)
 
-        val enrich = enriched.enrich(enrichContext<RiskInfo>(), this::testMethod)
+        val enrich = enriched.enrichOk(DataApplicationContext::riskInfo,enrichContext<RiskInfo>(), this::testMethod)
 
         println(enrich.mutationInfo)
 
-        val enrich1 = enrich.enrich(enrichContext<Set<ProductInfo>>(), this::testMethod)
+        val enrich1 = enrich.enrichOk(DataApplicationContext::productInfo,enrichContext<ProductInfos>(), this::testMethod)
 
         println(enrich1.mutationInfo)
 
@@ -81,10 +82,22 @@ class DataApplicationContextTest {
     fun `нарушен порядок запуска`() {
         val assertThrows = Assertions.assertThrows(
             IllegalArgumentException::class.java,
-            { dataApplicationContext.enrich(enrichContext<Set<ProductInfo>>(), this::getTraceId) })
+            { dataApplicationContext.enrichOk(DataApplicationContext::productInfo,enrichContext<ProductInfos>(), this::getTraceId) })
 
         Assertions.assertEquals(
-            "не могу принять ProductInfo, он должен быть принят после dealInfo",
+            "[dealInfo] must be recived before 'productInfo'",
+            assertThrows.message
+        )
+    }
+
+    @Test
+    fun `нарушен порядок запуска ожидается 2 пополнения`() {
+        val assertThrows = Assertions.assertThrows(
+            IllegalArgumentException::class.java,
+            { dataApplicationContext.enrichOk(DataApplicationContext::riskInfo,enrichContext<RiskInfo>(), this::getTraceId) })
+
+        Assertions.assertEquals(
+            "[participantInfo, dealInfo] must be recived before 'riskInfo'",
             assertThrows.message
         )
 

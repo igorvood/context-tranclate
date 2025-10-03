@@ -26,19 +26,6 @@ data class MutableContextParam<T : IContextParam?, E : IEnrichError>(
     override val mutableParam: Boolean
         get() = true
 
-    /**
-     * Возвращает параметр или бросает исключение если его нет.
-     * @throws IllegalStateException если параметр null или есть ошибка
-     */
-    override fun param(): T {
-        return result
-            ?.fold(
-                { error("Parameter not available due to error: $it") }, {
-                    it
-                }
-            ) ?: error("Parameter not yet available")
-    }
-
     fun success(
         value: T,
         method: KFunction<*>

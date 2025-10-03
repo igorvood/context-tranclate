@@ -32,44 +32,7 @@ data class ImmutableContextParam<T : IContextParam?, E : IEnrichError>(
     override val mutableParam: Boolean
         get() = false
 
-    /**
-     * Возвращает значение параметра если оно было успешно установлено.
-     *
-     * @return не-null значение параметра типа [T]
-     * @throws IllegalStateException если параметр еще не установлен или содержит ошибку
-     */
-    override fun param(): T {
 
-        return (result?: error("Parameter not yet available"))
-            .fold(
-                { error("Parameter not available due to error: $it") }, {
-                    it
-                }
-            )
-    }
-
-    /**
-     * Устанавливает успешное значение для параметра и возвращает новый экземпляр с обновленным состоянием.
-     * Проверяет, что параметр еще не был установлен ранее (так как он immutable).
-     *
-     * @param value значение параметра для установки
-     * @param method функция, в которой устанавливается значение (для трассировки)
-     * @return новый экземпляр [ImmutableContextParam] с установленным значением
-     * @throws IllegalArgumentException если параметр уже был установлен ранее
-     */
-    fun enrichOk(
-        value: T,
-        method: KFunction<*>
-    ): ImmutableContextParam<T, E> {
-        require(!this.isReceived()) {
-            val last = this.mutableMethods.last()
-            "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
-        }
-        return this.copy(
-            result = value.right(),
-            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-        )
-    }
 
     fun <C> map(f: (right: T) -> C): Either<E, C>? {
         return result?.map { f(it) }

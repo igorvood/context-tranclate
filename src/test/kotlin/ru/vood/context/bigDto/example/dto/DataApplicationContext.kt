@@ -87,27 +87,27 @@ data class DataApplicationContext(
     }
 */
 
-    fun enrich(dealInfo: DealInfo, method: KFunction<*>): DataApplicationContext {
-        val property: KProperty0<ImmutableContextParam<DealInfo, SomeError>> = this::dealInfo
-        return this.dealInfo.enrichOk(dealInfo, method)
-            .let { this.copy(dealInfo = it) }
-    }
-
-    fun enrich(productInfo: Set<ProductInfo>, method: KFunction<*>): DataApplicationContext {
-        require(dealInfo.isReceived()) { "не могу принять ProductInfo, он должен быть принят после dealInfo" }
-        return this.productInfo.success(ProductInfos(productInfo), method)
-            .let { this.copy(productInfo = it) }
-    }
-
-    fun enrich(participantInfo: ParticipantInfo, method: KFunction<*>): DataApplicationContext {
-        return this.participantInfo.enrichOk(participantInfo, method)
-            .let { this.copy(participantInfo = it) }
-    }
-
-    fun enrich(riskInfo: RiskInfo, method: KFunction<*>): DataApplicationContext {
-        return this.riskInfo.success(riskInfo, method)
-            .let { this.copy(riskInfo = it) }
-    }
+//    fun enrich(dealInfo: DealInfo, method: KFunction<*>): DataApplicationContext {
+//        val property: KProperty0<ImmutableContextParam<DealInfo, SomeError>> = this::dealInfo
+//        return this.dealInfo.enrichOk(dealInfo, method)
+//            .let { this.copy(dealInfo = it) }
+//    }
+//
+//    fun enrich(productInfo: Set<ProductInfo>, method: KFunction<*>): DataApplicationContext {
+//        require(dealInfo.isReceived()) { "не могу принять ProductInfo, он должен быть принят после dealInfo" }
+//        return this.productInfo.success(ProductInfos(productInfo), method)
+//            .let { this.copy(productInfo = it) }
+//    }
+//
+//    fun enrich(participantInfo: ParticipantInfo, method: KFunction<*>): DataApplicationContext {
+//        return this.participantInfo.enrichOk(participantInfo, method)
+//            .let { this.copy(participantInfo = it) }
+//    }
+//
+//    fun enrich(riskInfo: RiskInfo, method: KFunction<*>): DataApplicationContext {
+//        return this.riskInfo.success(riskInfo, method)
+//            .let { this.copy(riskInfo = it) }
+//    }
 
     val mutationInfo by lazy { mutableMethods() }
 

@@ -43,6 +43,29 @@ interface IBusinessContext<BC : IBusinessContext<BC>> {
         return meta.copyFun(this as BC, enrichedParam)
     }
 
+    fun <T : IContextParam?, E : IEnrichError> enrichOk(
+        prop: KProperty1<BC, AbstractContextParam<T, E>>,
+        data: T,
+        method: KFunction<*>
+    ): BC {
+        val meta: CTXMeta<BC, T, E, AbstractContextParam<T, E>> = (propsCTXMetaMap[prop.name]
+            ?: error("this error un imposible")).let { it as CTXMeta<BC, T, E, AbstractContextParam<T, E>> }
+        val notRecived = notRecived(meta)
+        require(notRecived.isEmpty()) { "$notRecived must be recived before '${prop.name}'" }
+        val enrichedParam: AbstractContextParam<T, E> = meta.prop.invoke(this as BC).enrichOk(data, method)
+        return meta.copyFun(this as BC, enrichedParam)
+    }
+
+    private fun <T : IContextParam?, E : IEnrichError> notRecived(meta: CTXMeta<BC, T, E, AbstractContextParam<T, E>>): List<String> {
+        val filter = meta.mustEnrichedAfter
+            .filter { nameAttribute ->
+                !(propsCTXMetaMap[nameAttribute]?.prop?.invoke(this as BC)?.isReceived() ?: false)
+            }
+
+        return filter
+    }
+
+
 //    fun <T : IContextParam, E : IEnrichError> enrichOk(
 //        prop: KProperty1<BC, AbstractContextParam<T, E>>,
 //        data: T,

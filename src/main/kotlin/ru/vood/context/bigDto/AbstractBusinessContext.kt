@@ -122,18 +122,10 @@ abstract class AbstractBusinessContext<BC : AbstractBusinessContext<BC>> {
     abstract val propsCTXMeta: List<CTXMeta<BC, *, *, *>>
 
     /**
-     * Список всех свойств параметров контекста.
-     * Используется для доступа к значениям параметров.
-     */
-    val includedContextProperty
-        get() = propsCTXMeta.map { it.prop }
-
-    /**
      * Map для быстрого доступа к мета-информации по имени свойства.
      * Ключ - имя свойства, значение - соответствующая CTXMeta
      */
-    val propsCTXMetaMap: Map<String, CTXMeta<BC, *, *, *>>
-        get() = propsCTXMeta.associateBy { it.prop.name }
+    val propsCTXMetaMap: Map<String, CTXMeta<BC, *, *, *>> by lazy { propsCTXMeta.associateBy { it.prop.name } }
 
     /**
      * Обогащает параметр контекста ошибкой.
@@ -233,7 +225,7 @@ abstract class AbstractBusinessContext<BC : AbstractBusinessContext<BC>> {
      * - Воспроизведение сценариев
      */
     fun mutableMethods(): List<Pair<String, MutableMethod>> {
-        return includedContextProperty
+        return propsCTXMeta.map { it.prop }
             .flatMap { prop ->
                 // Для каждого свойства собираем все методы, которые его изменяли
                 prop.invoke(this as BC).mutableMethods.map { v -> prop.name to v }

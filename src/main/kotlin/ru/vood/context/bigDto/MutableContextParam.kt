@@ -1,11 +1,8 @@
 package ru.vood.context.bigDto
 
 import arrow.core.Either
-import arrow.core.flatMap
-import arrow.core.right
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
-import kotlin.reflect.KFunction
 
 /**
  * Реализация [AbstractContextParam] для изменяемых ненулевых параметров.
@@ -25,29 +22,6 @@ data class MutableContextParam<T : IContextParam?, E : IEnrichError>(
 
     override val mutableParam: Boolean
         get() = true
-
-    fun success(
-        value: T,
-        method: KFunction<*>
-    ): MutableContextParam<T, E> {
-        return this.copy(
-            result = value.right(),
-            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-        )
-    }
-
-    fun <C> map(f: (right: T) -> C): Either<E, C>? {
-        return result?.map { f(it) }
-    }
-
-    fun <C> flatMap(f: (right: T) -> Either<E, C>): Either<E, C>? {
-        return result?.flatMap { f(it) }
-    }
-
-    fun <C> fold(ifLeft: (left: E) -> C, ifRight: (right: T) -> C): C? {
-        return result?.fold({ ifLeft(it) }, { ifRight(it) })
-    }
-
 
     companion object {
         /**

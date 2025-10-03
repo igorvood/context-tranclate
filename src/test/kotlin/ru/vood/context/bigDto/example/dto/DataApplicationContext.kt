@@ -1,24 +1,20 @@
 package ru.vood.context.bigDto.example.dto
 
-import arrow.core.right
 import kotlinx.serialization.Serializable
 import ru.vood.context.bigDto.*
-import ru.vood.context.bigDto.ImmutableNotNullContextParam.Companion.pendingImmutableNotNull
-import ru.vood.context.bigDto.ImmutableNullableContextParam.Companion.pendingImmutableNullable
-import ru.vood.context.bigDto.MutableNotNullContextParam.Companion.pendingMutableNotNull
-import ru.vood.context.bigDto.MutableNullableContextParam.Companion.pendingMutableNullable
+import ru.vood.context.bigDto.ImmutableContextParam.Companion.pendingImmutable
+import ru.vood.context.bigDto.MutableContextParam.Companion.pendingMutable
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty0
-import kotlin.reflect.KProperty1
 
 @Serializable
 data class DataApplicationContext(
     val traceId: String,
     val activityId: String,
-    val dealInfo: ImmutableNotNullContextParam<DealInfo, SomeError> = pendingImmutableNotNull(),
-    val productInfo: MutableNotNullContextParam<ProductInfos, SomeError> = pendingMutableNotNull(),
-    val participantInfo: ImmutableNullableContextParam<ParticipantInfo, SomeError> = pendingImmutableNullable(),
-    val riskInfo: MutableNullableContextParam<RiskInfo, SomeError> = pendingMutableNullable(),
+    val dealInfo: ImmutableContextParam<DealInfo, SomeError> = pendingImmutable(),
+    val productInfo: MutableContextParam<ProductInfos, SomeError> = pendingMutable(),
+    val participantInfo: ImmutableContextParam<ParticipantInfo?, SomeError> = pendingImmutable(),
+    val riskInfo: MutableContextParam<RiskInfo?, SomeError> = pendingMutable(),
 ) : IBusinessContext<DataApplicationContext> {
 
     override val propsCTXMeta: List<CTXMeta<DataApplicationContext, *, *, *>>
@@ -31,24 +27,24 @@ data class DataApplicationContext(
             )
         }
 
-    fun <T : IContextParam, E : IEnrichError> enrichError1(
-        error: E,
-        prop: KProperty1<DataApplicationContext, AbstractContextParam<T, E>>,
-        method: KFunction<*>
-    ): DataApplicationContext {
-        val enrichError = prop(this).enrichError(error, method)
-        val context = when (prop) {
-            DataApplicationContext::dealInfo -> copy(dealInfo = enrichError as ImmutableNotNullContextParam<DealInfo, SomeError>)
-            DataApplicationContext::productInfo -> copy(productInfo = enrichError as MutableNotNullContextParam<ProductInfos, SomeError>)
-            DataApplicationContext::participantInfo -> copy(participantInfo = enrichError as ImmutableNullableContextParam<ParticipantInfo, SomeError>)
-            DataApplicationContext::riskInfo -> copy(riskInfo = enrichError as MutableNullableContextParam<RiskInfo, SomeError>)
-            else -> error("Unknown property: $prop")
-        }
+//    fun <T : IContextParam, E : IEnrichError> enrichError1(
+//        error: E,
+//        prop: KProperty1<DataApplicationContext, AbstractContextParam<T, E>>,
+//        method: KFunction<*>
+//    ): DataApplicationContext {
+//        val enrichError = prop(this).enrichError(error, method)
+//        val context = when (prop) {
+//            DataApplicationContext::dealInfo -> copy(dealInfo = enrichError as ImmutableContextParam<DealInfo, SomeError>)
+//            DataApplicationContext::productInfo -> copy(productInfo = enrichError as MutableContextParam<ProductInfos, SomeError>)
+//            DataApplicationContext::participantInfo -> copy(participantInfo = enrichError as ImmutableNullableContextParam<ParticipantInfo, SomeError>)
+//            DataApplicationContext::riskInfo -> copy(riskInfo = enrichError as MutableNullableContextParam<RiskInfo, SomeError>)
+//            else -> error("Unknown property: $prop")
+//        }
+//
+//        return context
+//    }
 
-        return context
-    }
-
-
+/*
     fun <T : IContextParam, E : IEnrichError> enrich(
         data: T?,
         prop: KProperty1<DataApplicationContext, AbstractContextParam<T, E>>,
@@ -56,7 +52,7 @@ data class DataApplicationContext(
     ): DataApplicationContext {
         val prop1 = prop(this)
         val param = when (prop1) {
-            is ImmutableNotNullContextParam<T, E> -> {
+            is ImmutableContextParam<T, E> -> {
 //                assertImmutable()
                 prop1.copy(
                     result = data?.right(),
@@ -72,7 +68,7 @@ data class DataApplicationContext(
                 )
             }
 
-            is MutableNotNullContextParam<T, E> -> prop1.copy(
+            is MutableContextParam<T, E> -> prop1.copy(
                 result = data?.right(),
                 mutableMethods = prop1.mutableMethods.plus(MutableMethod(method))
             )
@@ -89,11 +85,11 @@ data class DataApplicationContext(
 //        return this.dealInfo.success(dealInfo, method)
 //            .let { this.copy(dealInfo = it) }
     }
-
+*/
 
     fun enrich(dealInfo: DealInfo, method: KFunction<*>): DataApplicationContext {
-        val property: KProperty0<ImmutableNotNullContextParam<DealInfo, SomeError>> = this::dealInfo
-        return this.dealInfo.success(dealInfo, method)
+        val property: KProperty0<ImmutableContextParam<DealInfo, SomeError>> = this::dealInfo
+        return this.dealInfo.enrichOk(dealInfo, method)
             .let { this.copy(dealInfo = it) }
     }
 
@@ -104,7 +100,7 @@ data class DataApplicationContext(
     }
 
     fun enrich(participantInfo: ParticipantInfo, method: KFunction<*>): DataApplicationContext {
-        return this.participantInfo.success(participantInfo, method)
+        return this.participantInfo.enrichOk(participantInfo, method)
             .let { this.copy(participantInfo = it) }
     }
 

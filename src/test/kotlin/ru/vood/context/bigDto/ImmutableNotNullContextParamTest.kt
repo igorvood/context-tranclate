@@ -16,7 +16,7 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
         // Создаем экземпляр класса с функцией
         `when`("создается через pendingImmutableNotNull") {
             then("должен быть в состоянии pending") {
-                val param = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+                val param = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
 
                 param.result shouldBe null
                 param.mutableMethods shouldBe emptyList()
@@ -26,7 +26,7 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
 
         `when`("вызывается param() на pending параметре") {
             then("должен бросать IllegalStateException") {
-                val param = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+                val param = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
 
                 val exception = kotlin.runCatching { param.param() }.exceptionOrNull()
                 exception.shouldBeInstanceOf<IllegalStateException>()
@@ -36,10 +36,10 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
 
         `when`("вызывается success с валидным значением") {
             then("должен возвращать новый экземпляр с установленным значением") {
-                val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+                val initial = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
                 val testValue = TestParam("test")
 
-                val result = initial.success(testValue, testMethod)
+                val result = initial.enrichOk(testValue, testMethod)
 
                 result.result shouldBe testValue.right()
                 result.mutableMethods shouldHaveSize 1
@@ -49,12 +49,12 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
 
         `when`("вызывается success на уже установленном параметре") {
             then("должен бросать IllegalArgumentException") {
-                val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+                val initial = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
                 val testValue = TestParam("test")
 
-                val firstSuccess = initial.success(testValue, testMethod)
+                val firstSuccess = initial.enrichOk(testValue, testMethod)
                 val exception = kotlin.runCatching {
-                    firstSuccess.success(TestParam("another"), testMethod)
+                    firstSuccess.enrichOk(TestParam("another"), testMethod)
                 }.exceptionOrNull()
 
                 exception.shouldBeInstanceOf<IllegalArgumentException>()
@@ -70,7 +70,7 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
             TestParam("") to "",
             TestParam("123") to "123"
         ) { (input, expected) ->
-            val param = ImmutableNotNullContextParam(
+            val param = ImmutableContextParam(
                 result = input.right(),
                 mutableMethods = listOf(MutableMethod(testMethod))
             )
@@ -88,9 +88,9 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
             TestParam("second") to "ru.vood.context.bigDto.TestFunctions.testMethod",
             TestParam("third") to "ru.vood.context.bigDto.TestFunctions.testMethod"
         ) { (value, expectedMethodName) ->
-            val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+            val initial = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
 
-            val result = initial.success(value, testMethod)
+            val result = initial.enrichOk(value, testMethod)
 
             result.result shouldBe value.right()
             result.mutableMethods shouldHaveSize 1
@@ -101,7 +101,7 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
         `when`("параметр содержит ошибку") {
             then("param() должен бросать исключение с описанием ошибки") {
                 val error = TestError("Something went wrong")
-                val param = ImmutableNotNullContextParam(
+                val param = ImmutableContextParam(
                     result = Either.Left(error),
                     mutableMethods = listOf(MutableMethod(testMethod))
                 )
@@ -114,9 +114,9 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
 
         `when`("проверяется mutableParam") {
             then("всегда должен возвращать false") {
-                val pending = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
-                val withValue = pending.success(TestParam("test"), testMethod)
-                val withError = ImmutableNotNullContextParam<TestParam, TestError>(
+                val pending = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
+                val withValue = pending.enrichOk(TestParam("test"), testMethod)
+                val withError = ImmutableContextParam<TestParam, TestError>(
                     result = Either.Left(TestError("error"))
                 )
 

@@ -2,7 +2,6 @@ package ru.vood.context.bigDto
 
 import arrow.core.Either
 import arrow.core.left
-import arrow.core.right
 import kotlin.reflect.KFunction
 
 /**
@@ -16,7 +15,7 @@ import kotlin.reflect.KFunction
  * @property result результат обработки параметра в виде [Either], содержащий либо ошибку [E], либо значение параметра [T]
  * @property mutableParam флаг, указывающий является ли параметр изменяемым
  */
-sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
+sealed class AbstractContextParam<out T : IContextParam?, E : IEnrichError>() {
 
     /**
      * Список методов, изменившие состояние параметра контекста.
@@ -73,68 +72,19 @@ sealed class AbstractContextParam<out T : IContextParam, E : IEnrichError>() {
         method: KFunction<*>
     ): AbstractContextParam<T, E> {
         return when (this) {
-            is ImmutableNotNullContextParam<T, E> -> {
+            is ImmutableContextParam<T, E> -> {
                 assertImmutable()
                 this.copy(
                     result = error.left(),
                     mutableMethods = this.mutableMethods.plus(MutableMethod(method))
                 )
             }
-
-            is ImmutableNullableContextParam<T, E> -> {
-                assertImmutable()
-                this.copy(
-                    result = error.left(),
-                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-                )
-            }
-
-            is MutableNotNullContextParam<T, E> -> this.copy(
-                result = error.left(),
-                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-            )
-
-            is MutableNullableContextParam<T, E> -> this.copy(
+            is MutableContextParam<T, E> -> this.copy(
                 result = error.left(),
                 mutableMethods = this.mutableMethods.plus(MutableMethod(method))
             )
         }
-
     }
-
-//    fun enrichData(
-//        data: T,
-//        method: KFunction<*>
-//    ): AbstractContextParam<T, E> {
-//        return when (this) {
-//            is ImmutableNotNullContextParam<T, E> -> {
-//                assertImmutable()
-//                this.copy(
-//                    result = data.right(),
-//                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-//                )
-//            }
-//
-//            is ImmutableNullableContextParam<T, E> -> {
-//                assertImmutable()
-//                this.copy(
-//                    result = data.right(),
-//                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-//                )
-//            }
-//
-//            is MutableNotNullContextParam<T, E> -> this.copy(
-//                result = error.left(),
-//                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-//            )
-//
-//            is MutableNullableContextParam<T, E> -> this.copy(
-//                result = error.left(),
-//                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-//            )
-//        }
-//
-//    }
 
     private fun AbstractContextParam<T, E>.assertImmutable() {
         require(!this.isReceived()) {

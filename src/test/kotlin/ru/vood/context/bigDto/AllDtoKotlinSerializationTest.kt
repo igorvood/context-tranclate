@@ -19,11 +19,11 @@ class AllDtoKotlinSerializationTest() : AbstractAllDtoSerializationTest(
         return super.getAllSerialisationClasses()
             .filter {
                 it.java.canonicalName !in setOf(
-                    MutableNotNullContextParam::class,
-                    MutableNullableContextParam::class,
+                    MutableContextParam::class,
+//                    MutableNullableContextParam::class,
                     DataApplicationContext::class,
-                    ImmutableNullableContextParam::class,
-                    ImmutableNotNullContextParam::class
+//                    ImmutableNullableContextParam::class,
+                    ImmutableContextParam::class
                 ).map { it.java.canonicalName }
             }
     }

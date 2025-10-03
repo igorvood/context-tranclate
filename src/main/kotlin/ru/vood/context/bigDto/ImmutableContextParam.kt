@@ -19,7 +19,7 @@ import kotlin.reflect.KFunction
  * @throws IllegalStateException при попытке получить значение до его установки или при повторной установке значения
  */
 @Serializable
-data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
+data class ImmutableContextParam<T : IContextParam?, E : IEnrichError>(
     @Contextual
     override val result: Either<E, T>? = null,
     override val mutableMethods: List<MutableMethod> = listOf(),
@@ -39,12 +39,13 @@ data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
      * @throws IllegalStateException если параметр еще не установлен или содержит ошибку
      */
     override fun param(): T {
-        return result
-            ?.fold(
+
+        return (result?: error("Parameter not yet available"))
+            .fold(
                 { error("Parameter not available due to error: $it") }, {
                     it
                 }
-            ) ?: error("Parameter not yet available")
+            )
     }
 
     /**
@@ -53,13 +54,13 @@ data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
      *
      * @param value значение параметра для установки
      * @param method функция, в которой устанавливается значение (для трассировки)
-     * @return новый экземпляр [ImmutableNotNullContextParam] с установленным значением
+     * @return новый экземпляр [ImmutableContextParam] с установленным значением
      * @throws IllegalArgumentException если параметр уже был установлен ранее
      */
-    fun success(
+    fun enrichOk(
         value: T,
         method: KFunction<*>
-    ): ImmutableNotNullContextParam<T, E> {
+    ): ImmutableContextParam<T, E> {
         require(!this.isReceived()) {
             val last = this.mutableMethods.last()
             "param is immutable, it all ready received in method ${last.methodName} at ${last.time}"
@@ -83,8 +84,8 @@ data class ImmutableNotNullContextParam<T : IContextParam, E : IEnrichError>(
     }
 
     companion object {
-        fun <T : IContextParam, E : IEnrichError> pendingImmutableNotNull(): ImmutableNotNullContextParam<T, E> {
-            return ImmutableNotNullContextParam()
+        fun <T : IContextParam?, E : IEnrichError> pendingImmutable(): ImmutableContextParam<T, E> {
+            return ImmutableContextParam()
         }
 
     }

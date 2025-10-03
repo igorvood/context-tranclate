@@ -3,19 +3,19 @@ package ru.vood.context.bigDto
 import kotlin.reflect.KFunction
 import kotlin.reflect.KProperty1
 
-data class CTXMeta<BC : IBusinessContext<BC>, T : IContextParam, E : IEnrichError, CP : AbstractContextParam<T, E>>(
+data class CTXMeta<BC : IBusinessContext<BC>, T : IContextParam?, E : IEnrichError, CP : AbstractContextParam<T, E>>(
     val prop: KProperty1<BC, CP>,
     val copyFun: (BC, CP) -> (BC),
     val mustEnrichedAfter: Set<String> = setOf()
 )
 
-infix fun <BC : IBusinessContext<BC>, T : IContextParam, E : IEnrichError, CP : AbstractContextParam<T, E>> KProperty1<BC, CP>.withCopy(
+infix fun <BC : IBusinessContext<BC>, T : IContextParam?, E : IEnrichError, CP : AbstractContextParam<T, E>> KProperty1<BC, CP>.withCopy(
     fc: (BC, CP) -> (BC)
 ): CTXMeta<BC, T, E, CP> {
     return CTXMeta(this, fc)
 }
 
-infix fun <BC : IBusinessContext<BC>, T : IContextParam, E : IEnrichError, CP : AbstractContextParam<T, E>> CTXMeta<BC, T, E, CP>.erichedAfther(
+infix fun <BC : IBusinessContext<BC>, T : IContextParam?, E : IEnrichError, CP : AbstractContextParam<T, E>> CTXMeta<BC, T, E, CP>.erichedAfther(
     otherProp: KProperty1<BC, *>
 ): CTXMeta<BC, T, E, CP> {
     require(this.prop.name != otherProp.name) { "property '${this.prop.name}' cannot be enriched after it self" }

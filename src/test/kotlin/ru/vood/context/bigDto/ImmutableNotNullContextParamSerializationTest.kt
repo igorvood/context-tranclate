@@ -10,16 +10,16 @@ import ru.vood.context.bigDto.example.dto.SomeError
 
 // Дополнительные тесты для проверки сериализации (если нужно)
 class ImmutableNotNullContextParamSerializationTest : FunSpec({
-    val dataRight = ImmutableNotNullContextParam<DealInfo, SomeError>(
+    val dataRight = ImmutableContextParam<DealInfo, SomeError>(
         Arranger.some(DealInfo::class.java).right()
     )
 
-    val dataLeft = ImmutableNotNullContextParam<DealInfo, SomeError>(
+    val dataLeft = ImmutableContextParam<DealInfo, SomeError>(
         Arranger.some(SomeError::class.java).left()
     )
 
 
-    val serializer = ImmutableNotNullContextParam.serializer<DealInfo, SomeError>(
+    val serializer = ImmutableContextParam.serializer<DealInfo, SomeError>(
         DealInfo.serializer(),
         SomeError.serializer()
     )

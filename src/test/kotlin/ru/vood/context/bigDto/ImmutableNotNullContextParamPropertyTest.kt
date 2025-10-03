@@ -10,10 +10,10 @@ class ImmutableNotNullContextParamPropertyTest : StringSpec({
 
     "param() should always return the same value that was set by success()" {
         checkAll(Arb.string()) { testString ->
-            val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+            val initial = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
             val testValue = TestParam(testString)
 
-            val result = initial.success(testValue, testMethod)
+            val result = initial.enrichOk(testValue, testMethod)
             val retrievedValue = result.param()
 
             retrievedValue shouldBe testValue
@@ -23,10 +23,10 @@ class ImmutableNotNullContextParamPropertyTest : StringSpec({
 
     "success() should always add method to mutableMethods" {
         checkAll(Arb.string()) { testString ->
-            val initial = ImmutableNotNullContextParam.pendingImmutableNotNull<TestParam, TestError>()
+            val initial = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
             val testValue = TestParam(testString)
 
-            val result = initial.success(testValue, testMethod)
+            val result = initial.enrichOk(testValue, testMethod)
 
             result.mutableMethods.size shouldBe 1
             result.mutableMethods[0].methodName shouldBe "ru.vood.context.bigDto.TestFunctions.testMethod"

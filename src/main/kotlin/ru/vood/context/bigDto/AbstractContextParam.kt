@@ -30,16 +30,7 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
      * Может быть null если параметр еще не получен/вычислен.
      */
     abstract val result: Either<E, T>?
-    /*
-        protected fun <C> map(f: (right: T?) -> C): Either<E, C>? {
-            return result?.map { f(it) }
-        }
 
-        protected fun <C> flatMap(f: (right: T?) -> Either<E, C>): Either<E, C>? {
-            return result?.flatMap { f(it) }
-        }
-    */
-// public inline fun <A, B, C> Either<A, B>.flatMap(f: (right: B) -> Either<A, C>): Either<A, C> {
     /**
      * Указывает, является ли параметр изменяемым.
      * Если true - параметр может быть изменен после создания, иначе параметр immutable.
@@ -68,7 +59,6 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
 
     fun resultOrThrow(): Either<E, T> = result ?: error("Result not yet available")
 
-
     /**
      * Создает новый экземпляр параметра контекста с указанной ошибкой.
      * Используется для обработки ошибок при обогащении контекста.
@@ -80,25 +70,7 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
     fun enrichError(
         error: E,
         method: KFunction<*>
-    ): AbstractContextParam<T, E> {
-        return enrich({ error.left() }, method)
-        /*
-                return when (this) {
-                    is ImmutableContextParam<T, E> -> {
-                        assertImmutable()
-                        this.copy(
-                            result = error.left(),
-                            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-                        )
-                    }
-
-                    is MutableContextParam<T, E> -> this.copy(
-                        result = error.left(),
-                        mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-                    )
-                }
-        */
-    }
+    ): AbstractContextParam<T, E> = enrich({ error.left() }, method)
 
     /**
      * Устанавливает успешное значение для параметра и возвращает новый экземпляр с обновленным состоянием.
@@ -112,25 +84,7 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
     fun enrichOk(
         value: T,
         method: KFunction<*>
-    ): AbstractContextParam<T, E> {
-        return enrich({ value.right() }, method)
-        /*
-                return when (this) {
-                    is ImmutableContextParam<T, E> -> {
-                        assertImmutable()
-                        this.copy(
-                            result = value.right(),
-                            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-                        )
-                    }
-
-                    is MutableContextParam<T, E> -> this.copy(
-                        result = value.right(),
-                        mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-                    )
-                }
-        */
-    }
+    ): AbstractContextParam<T, E> = enrich({ value.right() }, method)
 
     fun enrich(f: () -> Either<E, T>, method: KFunction<*>): AbstractContextParam<T, E> = when (this) {
         is ImmutableContextParam<T, E> -> {

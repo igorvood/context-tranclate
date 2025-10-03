@@ -125,7 +125,7 @@ abstract class AbstractBusinessContext<BC : AbstractBusinessContext<BC>> {
      * Map для быстрого доступа к мета-информации по имени свойства.
      * Ключ - имя свойства, значение - соответствующая CTXMeta
      */
-    val propsCTXMetaMap: Map<String, CTXMeta<BC, *, *, *>> by lazy { propsCTXMeta.associateBy { it.prop.name } }
+    val propsCTXMetaMap: Map<CTXPropertyName, CTXMeta<BC, *, *, *>> by lazy { propsCTXMeta.associateBy { CTXPropertyName(it.prop.name) } }
 
     /**
      * Обогащает параметр контекста ошибкой.
@@ -148,7 +148,7 @@ abstract class AbstractBusinessContext<BC : AbstractBusinessContext<BC>> {
         method: KFunction<*>
     ): BC {
         // Поиск мета-информации по имени свойства
-        val meta: CTXMeta<BC, T, E, AbstractContextParam<T, E>> = (propsCTXMetaMap[prop.name]
+        val meta: CTXMeta<BC, T, E, AbstractContextParam<T, E>> = (propsCTXMetaMap[CTXPropertyName(prop.name)]
             ?: error("this error un imposible")).let { it as CTXMeta<BC, T, E, AbstractContextParam<T, E>> }
 
         // Обогащение параметра ошибкой
@@ -181,7 +181,7 @@ abstract class AbstractBusinessContext<BC : AbstractBusinessContext<BC>> {
         method: KFunction<*>
     ): BC {
         // Поиск мета-информации
-        val meta: CTXMeta<BC, T, E, AbstractContextParam<T, E>> = (propsCTXMetaMap[prop.name]
+        val meta: CTXMeta<BC, T, E, AbstractContextParam<T, E>> = (propsCTXMetaMap[CTXPropertyName(prop.name)]
             ?: error("this error un imposible")).let { it as CTXMeta<BC, T, E, AbstractContextParam<T, E>> }
 
         // Проверка зависимостей - все указанные свойства должны быть уже обогащены
@@ -207,7 +207,7 @@ abstract class AbstractBusinessContext<BC : AbstractBusinessContext<BC>> {
         val filter = meta.mustEnrichedAfter
             .filter { nameAttribute ->
                 // Проверяем, было ли свойство уже обогащено (isReceived() == true)
-                !(propsCTXMetaMap[nameAttribute]?.prop?.invoke(this as BC)?.isReceived() ?: false)
+                !(propsCTXMetaMap[CTXPropertyName(nameAttribute)]?.prop?.invoke(this as BC)?.isReceived() ?: false)
             }
 
         return filter

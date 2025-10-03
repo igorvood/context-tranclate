@@ -16,7 +16,7 @@ class DataApplicationContextErrorTest {
             .enrichError(DataApplicationContext::dealInfo, enrichContext<SomeError>(), this::enrichNullable)
         val participantInfo: ImmutableContextParam<ParticipantInfo?, SomeError> = pendingImmutable()
         val participantInfo1 = participantInfo.enrichOk(null, this::enrichNullable)
-        val param = participantInfo1.param()
+        val param = participantInfo1.paramOrThrow()
 
         println(enrichError)
     }

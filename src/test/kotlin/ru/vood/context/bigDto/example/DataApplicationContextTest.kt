@@ -53,10 +53,10 @@ class DataApplicationContextTest {
 
         Assertions.assertEquals(enrich1, decodeFromString)
 
-        val message = enrich1.dealInfo.param()
-        val message1 = enrich1.participantInfo.param()
-        val message2 = enrich1.productInfo.param()
-        val message3 = enrich1.riskInfo.param()
+        val message = enrich1.dealInfo.paramOrThrow()
+        val message1 = enrich1.participantInfo.paramOrThrow()
+        val message2 = enrich1.productInfo.paramOrThrow()
+        val message3 = enrich1.riskInfo.paramOrThrow()
         println("dealInfo = " + message)
         println("participantInfo = " + message1)
         println("productInfo = " + message2)
@@ -66,10 +66,10 @@ class DataApplicationContextTest {
     @Test
     @Disabled
     fun `тест на пустые значения`() {
-        val message = dataApplicationContext.dealInfo.param()
-        val message1 = dataApplicationContext.participantInfo.param()
-        val message3 = dataApplicationContext.riskInfo.param()
-        val message2 = dataApplicationContext.productInfo.param()
+        val message = dataApplicationContext.dealInfo.paramOrThrow()
+        val message1 = dataApplicationContext.participantInfo.paramOrThrow()
+        val message3 = dataApplicationContext.riskInfo.paramOrThrow()
+        val message2 = dataApplicationContext.productInfo.paramOrThrow()
         println(message)
         println(message1)
         println(message2)

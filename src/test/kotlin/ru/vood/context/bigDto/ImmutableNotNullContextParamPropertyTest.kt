@@ -14,7 +14,7 @@ class ImmutableNotNullContextParamPropertyTest : StringSpec({
             val testValue = TestParam(testString)
 
             val result = initial.enrichOk(testValue, testMethod)
-            val retrievedValue = result.param()
+            val retrievedValue = result.paramOrThrow()
 
             retrievedValue shouldBe testValue
             retrievedValue.value shouldBe testString

@@ -28,7 +28,7 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
             then("должен бросать IllegalStateException") {
                 val param = ImmutableContextParam.pendingImmutable<TestParam, TestError>()
 
-                val exception = kotlin.runCatching { param.param() }.exceptionOrNull()
+                val exception = kotlin.runCatching { param.paramOrThrow() }.exceptionOrNull()
                 exception.shouldBeInstanceOf<IllegalStateException>()
                 exception.message shouldBe "Parameter not yet available"
             }
@@ -75,7 +75,7 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
                 mutableMethods = listOf(MutableMethod(testMethod))
             )
 
-            val result = param.param()
+            val result = param.paramOrThrow()
             result shouldBe input
             result.value shouldBe expected
         }
@@ -106,7 +106,7 @@ class ImmutableNotNullContextParamTest : BehaviorSpec({
                     mutableMethods = listOf(MutableMethod(testMethod))
                 )
 
-                val exception = kotlin.runCatching { param.param() }.exceptionOrNull()
+                val exception = kotlin.runCatching { param.paramOrThrow() }.exceptionOrNull()
                 exception.shouldBeInstanceOf<IllegalStateException>()
                 exception?.message shouldBe "Parameter not available due to error: $error"
             }

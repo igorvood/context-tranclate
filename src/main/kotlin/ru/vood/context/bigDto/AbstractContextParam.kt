@@ -58,14 +58,15 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
      * @throws IllegalStateException если параметр null или есть ошибка
      * @return параметр типа [T] если он успешно обработан, null в противном случае
      */
-    fun param(): T {
+    fun paramOrThrow(): T {
         return (result ?: error("Parameter not yet available"))
             .fold(
-                { error("Parameter not available due to error: $it") }, {
-                    it
-                }
+                ifLeft = { error("Parameter not available due to error: $it") },
+                ifRight = { it }
             )
     }
+
+    fun resultOrThrow(): Either<E, T> = result ?: error("Result not yet available")
 
 
     /**
@@ -80,20 +81,23 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
         error: E,
         method: KFunction<*>
     ): AbstractContextParam<T, E> {
-        return when (this) {
-            is ImmutableContextParam<T, E> -> {
-                assertImmutable()
-                this.copy(
-                    result = error.left(),
-                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-                )
-            }
+        return enrich({ error.left() }, method)
+        /*
+                return when (this) {
+                    is ImmutableContextParam<T, E> -> {
+                        assertImmutable()
+                        this.copy(
+                            result = error.left(),
+                            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+                        )
+                    }
 
-            is MutableContextParam<T, E> -> this.copy(
-                result = error.left(),
-                mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-            )
-        }
+                    is MutableContextParam<T, E> -> this.copy(
+                        result = error.left(),
+                        mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+                    )
+                }
+        */
     }
 
     /**
@@ -108,20 +112,38 @@ sealed class AbstractContextParam<T : IContextParam?, E : IEnrichError>() {
     fun enrichOk(
         value: T,
         method: KFunction<*>
-    ): AbstractContextParam<T, E>  {
-        return when (this) {
-            is ImmutableContextParam<T, E> -> {
-                assertImmutable()
-                this.copy(
-                    result = value.right(),
-                    mutableMethods = this.mutableMethods.plus(MutableMethod(method))
-                )
-            }
-            is MutableContextParam<T, E> -> this.copy(
-                result = value.right(),
+    ): AbstractContextParam<T, E> {
+        return enrich({ value.right() }, method)
+        /*
+                return when (this) {
+                    is ImmutableContextParam<T, E> -> {
+                        assertImmutable()
+                        this.copy(
+                            result = value.right(),
+                            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+                        )
+                    }
+
+                    is MutableContextParam<T, E> -> this.copy(
+                        result = value.right(),
+                        mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+                    )
+                }
+        */
+    }
+
+    fun enrich(f: () -> Either<E, T>, method: KFunction<*>): AbstractContextParam<T, E> = when (this) {
+        is ImmutableContextParam<T, E> -> {
+            assertImmutable()
+            this.copy(
+                result = f(),
                 mutableMethods = this.mutableMethods.plus(MutableMethod(method))
             )
         }
+        is MutableContextParam<T, E> -> this.copy(
+            result = f(),
+            mutableMethods = this.mutableMethods.plus(MutableMethod(method))
+        )
     }
 
     private fun AbstractContextParam<T, E>.assertImmutable() {

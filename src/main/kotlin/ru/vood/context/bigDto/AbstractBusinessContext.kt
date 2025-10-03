@@ -224,14 +224,12 @@ abstract class AbstractBusinessContext<BC : AbstractBusinessContext<BC>> {
      * - Аудит изменений контекста
      * - Воспроизведение сценариев
      */
-    fun mutableMethods(): List<Pair<String, MutableMethod>> {
-        return propsCTXMeta.map { it.prop }
-            .flatMap { prop ->
-                // Для каждого свойства собираем все методы, которые его изменяли
-                prop.invoke(this as BC).mutableMethods.map { v -> prop.name to v }
-            }
-            .sortedBy { it.second.time } // Сортировка по времени изменения
-    }
+    private fun mutableMethods(): List<Pair<String, MutableMethod>> = propsCTXMeta.map { it.prop }
+        .flatMap { prop ->
+            // Для каждого свойства собираем все методы, которые его изменяли
+            prop.invoke(this as BC).mutableMethods.map { v -> prop.name to v }
+        }
+        .sortedBy { it.second.time } // Сортировка по времени изменения
 
     /**
      * Лениво вычисляемая информация о мутациях.
